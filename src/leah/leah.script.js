@@ -442,6 +442,7 @@
                 if (zoneId === 'zoneHarmony') initHarmonyInterface();
                 if (zoneId === 'zoneZen') initZenVisualizer();
                 if (zoneId === 'zoneSpeedrun') startSpeedrunGame();
+                if (zoneId === 'zoneWish') initWishLamp();
             }
         }
 
