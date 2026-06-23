@@ -2255,13 +2255,14 @@
         // =========================================================================
         // MODULE 12: THE WISHING LAMP (Leah types wishes → Ishaan's inbox)
         // =========================================================================
-        // ─── CONFIGURE THIS ──────────────────────────────────────────────────────
-        // Drop a Web3Forms access key here (get one in 30s at https://web3forms.com).
-        // If empty, the button gracefully falls back to opening Leah's mail app
-        // with the wish pre-filled to RECIPIENT_EMAIL.
+        // Delivery runs through the /api/wish server route. The Web3Forms access
+        // key and recipient email live in server env vars (WEB3FORMS_KEY,
+        // WISH_RECIPIENT_EMAIL) so nothing secret ships to the client bundle
+        // or to GitHub. Set them in .env.local locally and in Vercel project
+        // settings for production.
         const WISH_CONFIG = {
-            web3formsKey: '',                      // e.g. 'a1b2c3d4-5678-90ab-cdef-1234567890ab'
-            recipientEmail: 'ishaan@example.com',  // change to your real email
+            endpoint: '/api/wish',
+            recipientEmail: 'ishaan210611@gmail.com',  // shown in fallback mailto only
             subjectPrefix: '🪔 Leah wished:'
         };
         const WISH_STORAGE_KEY = 'leah_wish_history_v1';
@@ -2341,34 +2342,29 @@
             }
 
             let sent = false;
-            if (WISH_CONFIG.web3formsKey) {
-                if (status) status.textContent = 'sending…';
-                try {
-                    const res = await fetch('https://api.web3forms.com/submit', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                        body: JSON.stringify({
-                            access_key: WISH_CONFIG.web3formsKey,
-                            subject: `${WISH_CONFIG.subjectPrefix} ${text.slice(0, 60)}${text.length > 60 ? '…' : ''}`,
-                            from_name: 'Leah (via Birthday Site)',
-                            to_email: WISH_CONFIG.recipientEmail,
-                            message: text,
-                            sent_at: new Date().toISOString()
-                        })
-                    });
-                    const data = await res.json().catch(() => ({}));
-                    sent = !!data.success;
-                    if (status) status.textContent = sent ? '✨ delivered to Ishaan' : '⚠️ delivery failed';
-                } catch (e) {
-                    if (status) status.textContent = '⚠️ network error';
+            if (status) status.textContent = 'sending…';
+            try {
+                const res = await fetch(WISH_CONFIG.endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+                const data = await res.json().catch(() => ({}));
+                sent = !!data.success;
+                if (sent) {
+                    if (status) status.textContent = '✨ delivered to Ishaan';
+                } else if (data.error === 'not_configured') {
+                    // Server env vars missing — fall back to mailto so the wish isn't lost.
+                    const subject = encodeURIComponent(`${WISH_CONFIG.subjectPrefix} ${text.slice(0, 60)}`);
+                    const body = encodeURIComponent(text + '\n\n— sent from Leah\'s birthday site 🪔');
+                    window.location.href = `mailto:${WISH_CONFIG.recipientEmail}?subject=${subject}&body=${body}`;
+                    if (status) status.textContent = '📨 opened mail app — hit Send!';
+                    sent = true;
+                } else {
+                    if (status) status.textContent = '⚠️ delivery failed';
                 }
-            } else {
-                // Fallback: open the user's mail app with the wish pre-filled.
-                const subject = encodeURIComponent(`${WISH_CONFIG.subjectPrefix} ${text.slice(0, 60)}`);
-                const body = encodeURIComponent(text + '\n\n— sent from Leah\'s birthday site 🪔');
-                window.location.href = `mailto:${WISH_CONFIG.recipientEmail}?subject=${subject}&body=${body}`;
-                if (status) status.textContent = '📨 opened mail app — hit Send!';
-                sent = true;
+            } catch (e) {
+                if (status) status.textContent = '⚠️ network error';
             }
 
             const history = loadWishHistory();
