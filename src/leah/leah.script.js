@@ -456,7 +456,7 @@
                 'zoneRedButton': 'modalRedButton', 'zoneCakeDefense': 'modalCakeDefense',
                 'zoneConstellation': 'modalConstellation', 'zoneHarmony': 'modalHarmony',
                 'zoneCringe': 'modalCringe', 'zoneTemple': 'modalTemple', 'zoneMuseum': 'modalMuseum',
-                'zoneSpeedrun': 'modalSpeedrun'
+                'zoneSpeedrun': 'modalSpeedrun', 'zoneWish': 'modalWish'
             };
             const target = map[zoneId];
             if (target) document.getElementById(target).classList.add('hidden');
