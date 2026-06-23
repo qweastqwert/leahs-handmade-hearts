@@ -1,0 +1,124 @@
+        body {
+            font-family: 'Patrick Hand', cursive;
+            background-color: #fdfbf7; /* Warm cream paper */
+            /* Infinite grid graph paper background design */
+            background-image: 
+                linear-gradient(rgba(147, 197, 253, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(147, 197, 253, 0.15) 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: #2b2b2b; /* Dark pencil charcoal instead of stark black */
+            overflow-x: hidden;
+            transition: transform 0.3s ease, filter 0.3s ease, background-color 0.5s ease;
+        }
+        
+        /* Tactile Hand-cut / Sketchbook cards */
+        .doodle-card {
+            background: #ffffff;
+            border: 3px solid #2d2d2d;
+            border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; 
+            box-shadow: 4px 5px 0px 0px #2d2d2d;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+            position: relative;
+        }
+        .doodle-card:hover:not(.no-hover) {
+            transform: translate(-3px, -4px) rotate(0.5deg);
+            box-shadow: 8px 10px 0px 0px #2d2d2d;
+        }
+        .doodle-card:active:not(.no-hover) {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px #2d2d2d;
+        }
+
+        /* Handwritten Highlighters */
+        .highlight-yellow {
+            background-image: linear-gradient(120deg, rgba(254, 240, 138, 0.7) 0%, rgba(254, 240, 138, 0.7) 100%);
+            background-repeat: no-repeat;
+            background-size: 100% 80%;
+            background-position: 0 85%;
+        }
+        .highlight-pink {
+            background-image: linear-gradient(120deg, rgba(251, 207, 232, 0.7) 0%, rgba(251, 207, 232, 0.7) 100%);
+            background-repeat: no-repeat;
+            background-size: 100% 80%;
+            background-position: 0 85%;
+        }
+
+        /* Cozy Sticky Tape Accents */
+        .sticky-tape {
+            position: absolute;
+            background: rgba(254, 240, 138, 0.7);
+            height: 20px;
+            width: 80px;
+            transform: rotate(-3deg);
+            top: -10px;
+            left: 50%;
+            margin-left: -40px;
+            border-left: 2px dashed rgba(0,0,0,0.1);
+            border-right: 2px dashed rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+        .sticky-tape-pink {
+            background: rgba(244, 143, 177, 0.6);
+        }
+
+        /* Crayon Scribble Progress Bars */
+        .scribble-progress {
+            background: repeating-linear-gradient(
+                45deg,
+                #2d2d2d,
+                #2d2d2d 4px,
+                #4a4a4a 4px,
+                #4a4a4a 8px
+            );
+        }
+
+        /* Floating interaction animations */
+        @keyframes float-heart {
+            0% { transform: translateY(0) scale(0.8) rotate(0deg); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-130px) scale(1.4) rotate(15deg); opacity: 0; }
+        }
+        .floating-heart {
+            position: absolute;
+            animation: float-heart 2s ease-out forwards;
+            pointer-events: none;
+            color: #ef4444;
+            font-size: 1.8rem;
+            z-index: 100;
+        }
+
+        /* Hand-drawn scribble shake for chaotic events */
+        .chaotic-shake {
+            animation: wild-shake 0.18s infinite;
+        }
+        @keyframes wild-shake {
+            0% { transform: translate(2px, 1px) rotate(0.5deg); }
+            10% { transform: translate(-1px, -2px) rotate(-0.5deg); }
+            20% { transform: translate(-2px, 0px) rotate(1deg); }
+            30% { transform: translate(0px, 2px) rotate(0deg); }
+            40% { transform: translate(2px, -1px) rotate(0.5deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            100% { transform: translate(1px, -1px) rotate(0deg); }
+        }
+
+        .zoom-pulse {
+            animation: zoom-pulse-keyframes 1.8s infinite alternate ease-in-out;
+        }
+        @keyframes zoom-pulse-keyframes {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.025); }
+        }
+
+        /* Custom Hand-Drawn Scrollbars */
+        ::-webkit-scrollbar {
+            width: 14px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fdfbf7;
+            border-left: 2px solid #2d2d2d;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2d2d2d;
+            border-radius: 8px;
+            border: 3px solid #fdfbf7;
+        }
