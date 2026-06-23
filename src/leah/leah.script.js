@@ -415,7 +415,7 @@
             decaySaturationsGlobal();
 
             // Clear all modal viewports to guarantee clean transition without overlays
-            const modals = ['modalZen', 'modalPickup', 'modalCupcake', 'modalGojo', 'modalSlot', 'modalBoss', 'modalRedButton', 'modalCakeDefense', 'modalConstellation', 'modalHarmony', 'modalCringe', 'modalTemple', 'modalMuseum', 'modalSpeedrun'];
+            const modals = ['modalZen', 'modalPickup', 'modalCupcake', 'modalGojo', 'modalSlot', 'modalBoss', 'modalRedButton', 'modalCakeDefense', 'modalConstellation', 'modalHarmony', 'modalCringe', 'modalTemple', 'modalMuseum', 'modalSpeedrun', 'modalWish'];
             modals.forEach(id => {
                 const element = document.getElementById(id);
                 if (element) element.classList.add('hidden');
