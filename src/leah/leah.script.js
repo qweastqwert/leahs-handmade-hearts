@@ -2149,7 +2149,260 @@
             requestAnimationFrame(runEndingFrame);
         }
 
+        // =========================================================================
+        // MODULE 11: HARMONY ARPEGGIO PLAYER (turns selected ingredients into a soothing loop)
+        // =========================================================================
+        // Pentatonic notes (A minor pentatonic) — every combination sounds consonant.
+        const harmonyNoteMap = {
+            matcha:  329.63, // E4
+            rain:    220.00, // A3
+            lofi:    261.63, // C4
+            cats:    392.00, // G4
+            novel:   293.66, // D4
+            blanket: 440.00  // A4
+        };
+        let harmonyLoopTimer = null;
+
+        function stopHarmonyArpeggio() {
+            if (harmonyLoopTimer) { clearInterval(harmonyLoopTimer); harmonyLoopTimer = null; }
+            const padRow = document.getElementById('harmonyPadRow');
+            if (padRow) { padRow.classList.add('hidden'); padRow.innerHTML = ''; }
+            const btn = document.getElementById('btnHarmonyPlay');
+            if (btn) btn.innerHTML = '▶ PLAY SOOTHING LOOP';
+        }
+
+        function playHarmonyTone(freq, padDot) {
+            if (!state.hasSynthesizer || !synth.ctx) return;
+            try {
+                const ctx = synth.ctx;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                gain.gain.setValueAtTime(0, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.07, ctx.currentTime + 0.25);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.4);
+                // Soft octave-below for warmth
+                const sub = ctx.createOscillator();
+                sub.type = 'sine';
+                sub.frequency.setValueAtTime(freq / 2, ctx.currentTime);
+                const subGain = ctx.createGain();
+                subGain.gain.setValueAtTime(0, ctx.currentTime);
+                subGain.gain.linearRampToValueAtTime(0.035, ctx.currentTime + 0.35);
+                subGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.6);
+                osc.connect(gain); gain.connect(ctx.destination);
+                sub.connect(subGain); subGain.connect(ctx.destination);
+                osc.start(); sub.start();
+                osc.stop(ctx.currentTime + 2.7); sub.stop(ctx.currentTime + 2.8);
+                if (padDot) {
+                    padDot.style.transform = 'scale(1.4)';
+                    padDot.style.boxShadow = '0 0 18px rgba(251,191,36,0.7)';
+                    setTimeout(() => {
+                        padDot.style.transform = 'scale(1)';
+                        padDot.style.boxShadow = '';
+                    }, 500);
+                }
+            } catch (e) {}
+        }
+
+        function toggleHarmonyArpeggio() {
+            if (harmonyLoopTimer) { stopHarmonyArpeggio(); return; }
+            if (state.selectedHarmonyIngredients.length !== 3) {
+                showCustomToast('Pick three first', 'Choose three ingredients to weave a melody.', '🎶');
+                return;
+            }
+            if (!state.hasSynthesizer) {
+                showCustomToast('Audio locked', 'Tap "Enable Cozy Audio" in the top banner first.', '🔈');
+                return;
+            }
+            const padRow = document.getElementById('harmonyPadRow');
+            padRow.classList.remove('hidden');
+            padRow.innerHTML = '';
+            const dots = [];
+            state.selectedHarmonyIngredients.forEach(id => {
+                const ing = harmonyIngredients.find(i => i.id === id);
+                const dot = document.createElement('div');
+                dot.className = 'px-4 py-3 border-2 border-stone-800 rounded-xl bg-white font-hand text-sm text-stone-900 shadow-[2px_2px_0px_0px_#2d2d2d] transition-transform duration-300';
+                dot.style.borderRadius = '14px 6px 14px 6px';
+                dot.textContent = ing ? ing.name : id;
+                padRow.appendChild(dot);
+                dots.push(dot);
+            });
+
+            document.getElementById('btnHarmonyPlay').innerHTML = '■ STOP LOOP';
+            const notes = state.selectedHarmonyIngredients.map(id => harmonyNoteMap[id] || 261.63);
+
+            let step = 0;
+            const tick = () => {
+                const idx = step % notes.length;
+                playHarmonyTone(notes[idx], dots[idx]);
+                step++;
+            };
+            tick();
+            harmonyLoopTimer = setInterval(tick, 850);
+        }
+        window.toggleHarmonyArpeggio = toggleHarmonyArpeggio;
+
+        // Stop arpeggio when the Harmony modal is closed
+        (function wrapCloseForHarmony() {
+            const originalClose = window.closeZone || closeZone;
+            window.closeZone = function (zoneId) {
+                if (zoneId === 'zoneHarmony') stopHarmonyArpeggio();
+                return originalClose.call(this, zoneId);
+            };
+        })();
+
+        // =========================================================================
+        // MODULE 12: THE WISHING LAMP (Leah types wishes → Ishaan's inbox)
+        // =========================================================================
+        // ─── CONFIGURE THIS ──────────────────────────────────────────────────────
+        // Drop a Web3Forms access key here (get one in 30s at https://web3forms.com).
+        // If empty, the button gracefully falls back to opening Leah's mail app
+        // with the wish pre-filled to RECIPIENT_EMAIL.
+        const WISH_CONFIG = {
+            web3formsKey: '',                      // e.g. 'a1b2c3d4-5678-90ab-cdef-1234567890ab'
+            recipientEmail: 'ishaan@example.com',  // change to your real email
+            subjectPrefix: '🪔 Leah wished:'
+        };
+        const WISH_STORAGE_KEY = 'leah_wish_history_v1';
+        const WISH_PREFILLS = {
+            travel: 'I want to travel to ',
+            learn:  'I want to learn ',
+            cozy:   'For a perfect cozy day with you, I want to ',
+            us:     'I wish that we could '
+        };
+
+        function loadWishHistory() {
+            try { return JSON.parse(localStorage.getItem(WISH_STORAGE_KEY) || '[]'); }
+            catch (e) { return []; }
+        }
+        function saveWishHistory(list) {
+            try { localStorage.setItem(WISH_STORAGE_KEY, JSON.stringify(list.slice(0, 20))); } catch (e) {}
+        }
+        function renderWishHistory() {
+            const ul = document.getElementById('wishHistoryList');
+            if (!ul) return;
+            const list = loadWishHistory();
+            if (!list.length) {
+                ul.innerHTML = '<li class="text-stone-400 italic text-xs">No wishes whispered yet.</li>';
+                return;
+            }
+            ul.innerHTML = list.map(w => {
+                const safe = String(w.text).replace(/[<>&]/g, c => ({ '<':'&lt;','>':'&gt;','&':'&amp;' }[c]));
+                const date = new Date(w.at).toLocaleString();
+                const status = w.sent ? '✨ sent' : '📭 saved (offline)';
+                return `<li class="border-b border-dashed border-stone-300 pb-1"><span class="text-[10px] font-sans text-stone-500">${date} · ${status}</span><br>${safe}</li>`;
+            }).join('');
+        }
+
+        function initWishLamp() {
+            renderWishHistory();
+            const ta = document.getElementById('wishText');
+            const counter = document.getElementById('wishCounter');
+            if (ta && counter && !ta._wired) {
+                ta._wired = true;
+                ta.addEventListener('input', () => {
+                    counter.textContent = `${ta.value.length} / 600`;
+                });
+            }
+            const lamp = document.getElementById('wishLamp');
+            if (lamp) lamp.style.transform = 'scale(1)';
+        }
+
+        function addWishPrefill(kind) {
+            const ta = document.getElementById('wishText');
+            if (!ta) return;
+            const prefix = WISH_PREFILLS[kind] || '';
+            ta.value = (ta.value ? ta.value.replace(/\s+$/, '') + '\n' : '') + prefix;
+            ta.focus();
+            ta.setSelectionRange(ta.value.length, ta.value.length);
+            document.getElementById('wishCounter').textContent = `${ta.value.length} / 600`;
+        }
+        window.addWishPrefill = addWishPrefill;
+
+        async function sendWish() {
+            const ta = document.getElementById('wishText');
+            const status = document.getElementById('wishStatus');
+            const lamp = document.getElementById('wishLamp');
+            const text = (ta?.value || '').trim();
+            if (!text) {
+                showCustomToast('Empty wish', 'Type a wish first — even tiny ones count.', '🪔');
+                return;
+            }
+
+            // Lamp shimmer
+            if (lamp) {
+                lamp.style.transform = 'scale(1.25) rotate(-6deg)';
+                setTimeout(() => { lamp.style.transform = 'scale(1) rotate(0deg)'; }, 600);
+            }
+            if (state.hasSynthesizer) {
+                synth.playTone(659.25, 'sine', 0.18, 0.07);
+                setTimeout(() => synth.playTone(987.77, 'triangle', 0.45, 0.08), 140);
+            }
+
+            let sent = false;
+            if (WISH_CONFIG.web3formsKey) {
+                if (status) status.textContent = 'sending…';
+                try {
+                    const res = await fetch('https://api.web3forms.com/submit', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                        body: JSON.stringify({
+                            access_key: WISH_CONFIG.web3formsKey,
+                            subject: `${WISH_CONFIG.subjectPrefix} ${text.slice(0, 60)}${text.length > 60 ? '…' : ''}`,
+                            from_name: 'Leah (via Birthday Site)',
+                            to_email: WISH_CONFIG.recipientEmail,
+                            message: text,
+                            sent_at: new Date().toISOString()
+                        })
+                    });
+                    const data = await res.json().catch(() => ({}));
+                    sent = !!data.success;
+                    if (status) status.textContent = sent ? '✨ delivered to Ishaan' : '⚠️ delivery failed';
+                } catch (e) {
+                    if (status) status.textContent = '⚠️ network error';
+                }
+            } else {
+                // Fallback: open the user's mail app with the wish pre-filled.
+                const subject = encodeURIComponent(`${WISH_CONFIG.subjectPrefix} ${text.slice(0, 60)}`);
+                const body = encodeURIComponent(text + '\n\n— sent from Leah\'s birthday site 🪔');
+                window.location.href = `mailto:${WISH_CONFIG.recipientEmail}?subject=${subject}&body=${body}`;
+                if (status) status.textContent = '📨 opened mail app — hit Send!';
+                sent = true;
+            }
+
+            const history = loadWishHistory();
+            history.unshift({ text, at: Date.now(), sent });
+            saveWishHistory(history);
+            renderWishHistory();
+
+            if (sent) {
+                showCustomToast('Wish lit ✨', 'Your wish is on its way to Ishaan.', '🪔');
+                ta.value = '';
+                document.getElementById('wishCounter').textContent = '0 / 600';
+                // Floating hearts above the lamp
+                if (lamp) {
+                    const rect = lamp.getBoundingClientRect();
+                    for (let i = 0; i < 5; i++) {
+                        setTimeout(() => {
+                            const h = document.createElement('div');
+                            h.className = 'floating-heart';
+                            h.textContent = '✨';
+                            h.style.left = (rect.left + rect.width / 2 + (Math.random() - 0.5) * 60) + 'px';
+                            h.style.top = (rect.top + window.scrollY) + 'px';
+                            h.style.position = 'absolute';
+                            document.body.appendChild(h);
+                            setTimeout(() => h.remove(), 2100);
+                        }, i * 80);
+                    }
+                }
+            }
+        }
+        window.sendWish = sendWish;
+        window.initWishLamp = initWishLamp;
+
         window.onload = function() {
             earnReward(0, 0);
             triggerAchievement('ach_join');
         };
+
