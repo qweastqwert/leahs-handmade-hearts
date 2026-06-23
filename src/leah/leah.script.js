@@ -491,8 +491,11 @@
             zenVisualizerCtx = zenVisualizerCanvas.getContext('2d');
             zenVisualizerCanvas.width = zenVisualizerCanvas.offsetWidth;
             zenVisualizerCanvas.height = 128;
+            const hint = document.getElementById('zenAudioHint');
+            if (hint) hint.classList.toggle('hidden', !!state.hasSynthesizer);
             drawZenFrame();
         }
+
 
         function drawZenFrame() {
             if (document.getElementById('modalZen').classList.contains('hidden')) return;
