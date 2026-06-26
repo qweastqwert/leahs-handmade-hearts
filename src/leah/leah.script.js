@@ -2158,19 +2158,52 @@
         // FINALE ENDING SEQUENCER
         // =========================================================================
         function initiateEndingCinematic() {
-            if (state.hasSynthesizer) { synth.playLevelUp(); }
             const cinema = document.getElementById('endingCinematic');
             cinema.classList.remove('pointer-events-none');
             cinema.classList.add('opacity-100');
             initEndingCanvas();
 
-            setTimeout(() => {
-                document.getElementById('endingTitle').classList.remove('scale-75', 'opacity-0');
-            }, 800);
+            const crown = document.getElementById('endingCrown');
+            const rays  = document.getElementById('finaleRays');
+            const title = document.getElementById('endingTitle');
+            const letter= document.getElementById('endingLetter');
+            const seal  = document.getElementById('endingSeal');
 
+            // Stage 0 — soft chime sweep
+            if (state.hasSynthesizer && synth.ctx) {
+                const chimes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+                chimes.forEach((f, i) => setTimeout(() => synth.playTone(f, 'sine', 0.35, 0.06), i * 180));
+            }
+
+            // Stage 1 — crown bloom
+            setTimeout(() => { crown && crown.classList.add('bloom'); }, 400);
+            setTimeout(() => { rays  && rays.classList.add('on'); }, 700);
+
+            // Stage 2 — title shimmer in
             setTimeout(() => {
-                document.getElementById('endingLetter').classList.remove('translate-y-8', 'opacity-0');
-            }, 2000);
+                title && title.classList.remove('scale-75', 'opacity-0');
+                burstSparkles(40);
+                if (state.hasSynthesizer) synth.playLevelUp && synth.playLevelUp();
+            }, 1100);
+
+            // Stage 3 — fireworks
+            for (let i = 0; i < 6; i++) {
+                setTimeout(() => spawnFirework(), 1500 + i * 450);
+            }
+
+            // Stage 4 — letter rises, seal cracks
+            setTimeout(() => {
+                letter && letter.classList.remove('translate-y-8', 'opacity-0');
+            }, 2300);
+            setTimeout(() => {
+                seal && seal.classList.add('broken');
+                if (state.hasSynthesizer) synth.playTone(196, 'triangle', 0.25, 0.09);
+                burstSparkles(24);
+            }, 3300);
+
+            // Stage 5 — continuous gentle sparkle drizzle
+            if (cinema._sparkleTimer) clearInterval(cinema._sparkleTimer);
+            cinema._sparkleTimer = setInterval(() => burstSparkles(3), 900);
         }
 
         function closeEndingCinematic() {
@@ -2178,41 +2211,105 @@
             const cinema = document.getElementById('endingCinematic');
             cinema.classList.add('pointer-events-none');
             cinema.classList.remove('opacity-100');
+            if (cinema._sparkleTimer) { clearInterval(cinema._sparkleTimer); cinema._sparkleTimer = null; }
+            // Reset for replay
+            const crown = document.getElementById('endingCrown');
+            const rays  = document.getElementById('finaleRays');
+            const title = document.getElementById('endingTitle');
+            const letter= document.getElementById('endingLetter');
+            const seal  = document.getElementById('endingSeal');
+            crown && crown.classList.remove('bloom');
+            rays  && rays.classList.remove('on');
+            title && title.classList.add('scale-75', 'opacity-0');
+            letter&& letter.classList.add('translate-y-8', 'opacity-0');
+            seal  && seal.classList.remove('broken');
+            endingFireworks = [];
         }
 
-        let endingCanvas, endingCtx, endingStars = [];
+        // Hand-doodled sparkle glyphs that puff around the crown / letter
+        const SPARKLE_GLYPHS = ['✦','✧','★','✺','✹','✶','✷','·'];
+        function burstSparkles(n) {
+            const layer = document.getElementById('finaleSparkleLayer');
+            if (!layer) return;
+            const rect = layer.getBoundingClientRect();
+            for (let i = 0; i < n; i++) {
+                const s = document.createElement('span');
+                s.className = 'finale-sparkle';
+                s.textContent = SPARKLE_GLYPHS[Math.floor(Math.random() * SPARKLE_GLYPHS.length)];
+                const cx = rect.width * (0.15 + Math.random() * 0.7);
+                const cy = rect.height * (0.15 + Math.random() * 0.55);
+                s.style.left = cx + 'px';
+                s.style.top  = cy + 'px';
+                s.style.fontSize = (16 + Math.random() * 22) + 'px';
+                s.style.color = ['#fbbf24','#f472b6','#a78bfa','#60a5fa','#f87171'][Math.floor(Math.random()*5)];
+                layer.appendChild(s);
+                setTimeout(() => s.remove(), 1700);
+            }
+        }
+
+        let endingCanvas, endingCtx, endingStars = [], endingFireworks = [];
 
         function initEndingCanvas() {
             endingCanvas = document.getElementById('endingCanvas');
             endingCtx = endingCanvas.getContext('2d');
             endingCanvas.width = window.innerWidth;
             endingCanvas.height = window.innerHeight;
-
-            for (let i = 0; i < 35; i++) {
+            endingStars = [];
+            for (let i = 0; i < 70; i++) {
                 endingStars.push({
                     x: Math.random() * endingCanvas.width,
                     y: Math.random() * endingCanvas.height,
-                    radius: Math.random() * 2 + 1,
+                    radius: Math.random() * 1.8 + 0.6,
                     alpha: Math.random() * 0.7 + 0.3,
-                    speed: Math.random() * 0.4 + 0.1
+                    speed: Math.random() * 0.35 + 0.08,
+                    hue: Math.random() < 0.5 ? '251,191,36' : (Math.random() < 0.5 ? '244,114,182' : '167,139,250')
                 });
             }
             runEndingFrame();
         }
 
+        function spawnFirework() {
+            if (!endingCanvas) return;
+            const x = endingCanvas.width * (0.2 + Math.random() * 0.6);
+            const y = endingCanvas.height * (0.2 + Math.random() * 0.4);
+            const hue = ['251,191,36','244,114,182','167,139,250','96,165,250','248,113,113'][Math.floor(Math.random()*5)];
+            const count = 36;
+            for (let i = 0; i < count; i++) {
+                const a = (Math.PI * 2 * i) / count;
+                const speed = 2 + Math.random() * 2.4;
+                endingFireworks.push({
+                    x, y,
+                    vx: Math.cos(a) * speed,
+                    vy: Math.sin(a) * speed,
+                    life: 1, hue
+                });
+            }
+            if (state.hasSynthesizer) synth.playTone(880 + Math.random()*220, 'triangle', 0.18, 0.05);
+        }
+
         function runEndingFrame() {
             if (!document.getElementById('endingCinematic').classList.contains('opacity-100')) return;
 
-            endingCtx.fillStyle = 'rgba(254, 252, 248, 0.15)';
+            endingCtx.fillStyle = 'rgba(254, 252, 248, 0.18)';
             endingCtx.fillRect(0, 0, endingCanvas.width, endingCanvas.height);
 
             endingStars.forEach(s => {
                 s.y -= s.speed;
-                if (s.y < 0) s.y = endingCanvas.height;
-
-                endingCtx.fillStyle = `rgba(147, 51, 234, ${s.alpha})`; 
+                if (s.y < 0) { s.y = endingCanvas.height; s.x = Math.random() * endingCanvas.width; }
+                endingCtx.fillStyle = `rgba(${s.hue}, ${s.alpha})`;
                 endingCtx.beginPath();
                 endingCtx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+                endingCtx.fill();
+            });
+
+            endingFireworks = endingFireworks.filter(p => p.life > 0.02);
+            endingFireworks.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                p.vy += 0.04; p.vx *= 0.985; p.vy *= 0.985;
+                p.life *= 0.955;
+                endingCtx.fillStyle = `rgba(${p.hue}, ${p.life})`;
+                endingCtx.beginPath();
+                endingCtx.arc(p.x, p.y, 2.4, 0, Math.PI * 2);
                 endingCtx.fill();
             });
 
