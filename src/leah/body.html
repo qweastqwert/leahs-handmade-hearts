@@ -1095,38 +1095,44 @@
         </div>
 
         <!-- Ending Cinematic Overlay -->
-        <div id="endingCinematic" class="fixed inset-0 bg-[#fefcf8] z-[200] flex flex-col items-center justify-center p-6 text-center transition-all duration-1000 opacity-0 pointer-events-none">
-            <canvas id="endingCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-0 opacity-60"></canvas>
-            
-            <div class="relative z-10 max-w-2xl mx-auto space-y-8 select-none">
-                <div id="endingCrown" class="w-20 h-20 mx-auto rounded-3xl bg-white border-3 border-stone-800 flex items-center justify-center text-4xl shadow-[4px_4px_0px_0px_#2d2d2d] animate-bounce" style="border-radius: 40% 10% 40% 10%;">
+        <div id="endingCinematic" class="finale-backdrop fixed inset-0 z-[200] flex flex-col items-center justify-center p-6 text-center transition-all duration-1000 opacity-0 pointer-events-none overflow-hidden">
+            <div id="finaleRays" class="finale-rays"></div>
+            <canvas id="endingCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
+            <div id="finaleSparkleLayer" class="absolute inset-0 pointer-events-none z-[5]"></div>
+
+            <div class="relative z-10 max-w-2xl mx-auto space-y-7 select-none">
+                <div id="endingCrown" class="finale-crown w-24 h-24 mx-auto rounded-3xl bg-white border-3 border-stone-800 flex items-center justify-center text-5xl" style="border-radius: 40% 10% 40% 10%;">
                     👑
                 </div>
-                
-                <h1 id="endingTitle" class="font-sketch text-4xl md:text-6xl font-black text-stone-900 tracking-tight scale-75 opacity-0 transition-all duration-[2000ms]">
+
+                <div class="flex justify-center"><span class="finale-ribbon">★ June 30 · for Leah ★</span></div>
+
+                <h1 id="endingTitle" class="finale-title font-sketch text-5xl md:text-7xl font-black tracking-tight scale-75 opacity-0 transition-all duration-[2000ms]">
                     Happy Birthday, Leah.
                 </h1>
 
-                <div id="endingLetter" class="bg-white border-3 border-stone-800 p-6 rounded-[25px] text-stone-850 text-base leading-relaxed space-y-4 opacity-0 translate-y-8 transition-all duration-[2500ms] shadow-[6px_6px_0px_0px_#2d2d2d] text-left" style="border-radius: 30px 10px 30px 10px;">
-                    <p class="font-sketch font-bold text-2xl text-stone-900 border-b-2 border-stone-100 pb-2">To the incredible Leah,</p>
+                <div id="endingLetter" class="doodle-frame p-7 text-stone-850 text-base leading-relaxed space-y-4 opacity-0 translate-y-8 transition-all duration-[2500ms] text-left relative">
+                    <span id="endingSeal" class="finale-seal">L</span>
+                    <p class="font-sketch font-bold text-2xl text-stone-900 border-b-2 border-dashed border-stone-200 pb-2">To the incredible <span class="marker-underline">Leah</span>,</p>
                     <p class="text-base text-stone-600 font-semibold font-hand">
-                        A typical generic birthday website could never capture the spontaneous energy, deep comments, and absolute warmth you share with the world every single day. That's why this tiny notebook universe was built for you.
+                        A typical generic birthday website could never capture the spontaneous energy, deep comments, and absolute warmth you share with the world every single day. That's why this tiny notebook universe was built — folded, doodled, and stitched together — for you.
                     </p>
                     <p class="text-base text-purple-700 font-bold font-hand italic">
-                        "May your June 30th and the years ahead be packed with quiet ambient soundscapes, perfectly decorated cupcakes, stargazing under infinite skies, and beautiful cozy smiles. You deserve every ounce of wonder this world has to offer!"
+                        "May your June 30th and the years ahead be packed with quiet ambient soundscapes, perfectly decorated cupcakes, stargazing under infinite skies, and beautiful cozy smiles. You deserve every ounce of wonder this world has to offer."
                     </p>
-                    <p class="text-xs text-stone-400 pt-4 font-bold uppercase tracking-wider border-t-2 border-stone-100 flex justify-between font-sans">
-                        <span>Made with absolute care & affection</span>
-                        <span class="text-stone-800 font-sketch text-sm">By Ishaan</span>
+                    <p class="text-xs text-stone-400 pt-3 font-bold uppercase tracking-wider border-t-2 border-dashed border-stone-200 flex justify-between font-sans">
+                        <span>Made with absolute care &amp; affection</span>
+                        <span class="text-stone-800 font-sketch text-base">— Ishaan ✦</span>
                     </p>
                 </div>
 
-                <div class="flex justify-center pt-4 font-sans">
-                    <button onclick="closeEndingCinematic()" class="px-6 py-3 bg-stone-900 border-2 border-stone-800 text-xs font-bold text-white rounded-xl hover:bg-stone-800 transition-colors relative z-20 pointer-events-auto shadow-[2px_2px_0px_0px_#ef4444]">
-                        Back to Notebook
+                <div class="flex justify-center pt-2 font-sans">
+                    <button onclick="closeEndingCinematic()" class="px-6 py-3 bg-stone-900 border-2 border-stone-800 text-xs font-bold text-white rounded-xl hover:bg-stone-800 transition-colors relative z-20 pointer-events-auto shadow-[3px_3px_0px_0px_#ef4444]">
+                        Back to the Notebook
                     </button>
                 </div>
             </div>
+        </div>
         </div>
 
     </main>
