@@ -1086,9 +1086,9 @@
         // MODULE 5: COMPLIMENT SLOT MACHINE
         // =========================================================================
         const slotRolls = [
-            ["Leah's smile", "Her kind presence", "The cosmic focus", "Quiet stargazing", "A comfy laugh", "Her direct energy", "The atomic alignment", "A clever critique", "A cozy kitchen wave", "Her absolute aura"],
-            ["spontaneously clears", "comfortably brightens", "instantly orbits", "restructures the local", "perfectly aligns", "beautifully matches", "naturally establishes", "effortlessly stabilizes", "decisively guides", "pleasantly warms"],
-            ["any storm vector.", "every busy room.", "all chaotic thoughts.", "into happy records.", "with gentle light.", "with cozy velvet layers.", "the surrounding galaxy.", "the complete matrix.", "our quantum entanglement.", "beyond stellar limits."]
+            ["Leah's smile", "Her kind presence", "The cosmic focus", "Quiet stargazing", "A comfy laugh", "Her direct energy", "The atomic alignment", "A clever critique", "A cozy kitchen wave", "Her absolute aura", "Her sleepy yawn", "Leah's playlist", "A 2am voicenote", "Her hoodie hugs", "That tilted head smirk", "Leah's handwriting", "Her midnight rant", "Her caffeine arc", "A single Leah giggle", "Her shower-thought theorem"],
+            ["spontaneously clears", "comfortably brightens", "instantly orbits", "restructures the local", "perfectly aligns", "beautifully matches", "naturally establishes", "effortlessly stabilizes", "decisively guides", "pleasantly warms", "quietly rewires", "tenderly softens", "casually outshines", "lovingly redecorates", "secretly fuels", "magnetically pulls", "delicately untangles", "absurdly improves", "ridiculously beautifies", "criminally upgrades"],
+            ["any storm vector.", "every busy room.", "all chaotic thoughts.", "into happy records.", "with gentle light.", "with cozy velvet layers.", "the surrounding galaxy.", "the complete matrix.", "our quantum entanglement.", "beyond stellar limits.", "the entire timeline.", "Ishaan's whole week.", "the laws of vibes.", "every Monday morning.", "this dumb little planet.", "the airport queue.", "the group chat.", "the spotify algorithm.", "my serotonin levels.", "the concept of bedtime."]
         ];
         let slotRolling = false;
 
@@ -1112,19 +1112,29 @@
                 if (steps >= 15) {
                     clearInterval(interval);
                     slotRolling = false;
-                    
+                    const tierEl = document.getElementById('slotTierText');
+
                     if (r1 === "Leah's smile" && r2 === "comfortably brightens" && r3 === "every busy room.") {
-                        document.getElementById('slotTierText').innerText = `Tier: SPECIAL AURA JACKPOT!`;
-                        document.getElementById('slotTierText').className = `text-xs font-bold uppercase tracking-wide bg-yellow-100 border-2 border-yellow-500 px-3 py-1 rounded-full shadow-[2px_2px_0px_0px_#2d2d2d] animate-bounce`;
+                        tierEl.innerText = `Tier: SPECIAL AURA JACKPOT!`;
+                        tierEl.className = `text-xs font-bold uppercase tracking-wide bg-yellow-100 border-2 border-yellow-500 px-3 py-1 rounded-full shadow-[2px_2px_0px_0px_#2d2d2d] animate-bounce`;
                         earnReward(100, 10, 'slots');
                         if (state.hasSynthesizer) { synth.playLevelUp(); }
+                    } else if (r1 === "Her absolute aura" && r2 === "perfectly aligns" && r3 === "the complete matrix.") {
+                        tierEl.innerText = `Tier: ✨ STELLAR ALIGNMENT ✨`;
+                        tierEl.className = `text-xs font-bold uppercase tracking-wide bg-purple-100 border-2 border-purple-600 text-purple-800 px-3 py-1 rounded-full shadow-[2px_2px_0px_0px_#2d2d2d] animate-bounce`;
+                        earnReward(150, 15, 'slots');
+                        if (state.hasSynthesizer) { synth.playLevelUp(); }
+                        showCustomToast("STELLAR ALIGNMENT", "I'm the Gift you ungrateful idiot 🎁", '💢');
+                        setTimeout(() => {
+                            showCustomToast("...okay okay", "jk text me and receive your grant 💌", '😘');
+                        }, 3200);
                     } else {
                         const tiers = ["COMMON", "RARE", "MYTHIC", "GOLDEN COZY CONSTANT"];
                         const tierColors = ["text-stone-500", "text-blue-600 font-bold", "text-purple-600 font-extrabold", "text-yellow-600 font-black animate-pulse"];
                         const rollIdx = Math.floor(Math.random() * tiers.length);
-                        
-                        document.getElementById('slotTierText').innerText = `Tier: ${tiers[rollIdx]} ASSEMBLED`;
-                        document.getElementById('slotTierText').className = `text-xs font-bold uppercase tracking-wide bg-white border border-stone-300 px-3 py-1 rounded-full shadow-[2px_2px_0px_0px_#2d2d2d] ${tierColors[rollIdx]}`;
+
+                        tierEl.innerText = `Tier: ${tiers[rollIdx]} ASSEMBLED`;
+                        tierEl.className = `text-xs font-bold uppercase tracking-wide bg-white border border-stone-300 px-3 py-1 rounded-full shadow-[2px_2px_0px_0px_#2d2d2d] ${tierColors[rollIdx]}`;
 
                         triggerAchievement('ach_slot');
                         earnReward(30, 2, 'slots');
