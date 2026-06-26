@@ -1374,11 +1374,61 @@
                 status.innerText = "Scribble textures are warping wildly! High frequency energy!";
                 document.body.style.filter = "blur(0.8px) invert(0.8) hue-rotate(90deg)";
             } else if (state.redButtonClicks === 200) {
-                status.innerText = "Almost at maximum click parameters. Universal restoration incoming soon!";
-            } else if (state.redButtonClicks === 240) {
-                status.innerText = "Glitches reaching peak saturation! 10 clicks to absolute reboot.";
+                status.innerText = "The chaos has plateaued. Keep going — something tender lives at 1000.";
+            } else if (state.redButtonClicks === 500) {
+                status.innerText = "Halfway. The universe is humming a love song under its breath.";
+            } else if (state.redButtonClicks === 900) {
+                status.innerText = "100 clicks left. The curse is lifting…";
+            } else if (state.redButtonClicks === 990) {
+                status.innerText = "10 more. Close your eyes a little.";
             }
         }
+
+        function showLoveYouPage() {
+            // remove any existing
+            const existing = document.getElementById('loveYouOverlay');
+            if (existing) existing.remove();
+
+            const overlay = document.createElement('div');
+            overlay.id = 'loveYouOverlay';
+            overlay.style.cssText = "position:fixed;inset:0;z-index:99999;background:radial-gradient(circle at 50% 40%, #fff1f5 0%, #ffe4ec 45%, #fbcfe8 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;font-family:'Patrick Hand', cursive;animation:loveFadeIn 0.8s ease-out;overflow:hidden;";
+            overlay.innerHTML = `
+                <style>
+                    @keyframes loveFadeIn { from { opacity:0; transform:scale(1.04); } to { opacity:1; transform:scale(1); } }
+                    @keyframes loveHeartFloat { 0% { transform: translateY(100vh) scale(0.6); opacity:0; } 10% { opacity:1; } 100% { transform: translateY(-20vh) scale(1.1); opacity:0; } }
+                    @keyframes loveBeat { 0%,100% { transform:scale(1); } 50% { transform:scale(1.08); } }
+                    .love-heart { position:absolute; font-size:28px; animation: loveHeartFloat 7s linear infinite; }
+                </style>
+                <div style="position:absolute;inset:0;pointer-events:none;" id="loveHearts"></div>
+                <div style="text-align:center;padding:40px;max-width:640px;position:relative;z-index:2;">
+                    <div style="font-size:96px;animation:loveBeat 1.4s ease-in-out infinite;">💖</div>
+                    <h1 style="font-family:'Caveat', 'Patrick Hand', cursive; font-size:84px; color:#be185d; margin:12px 0 8px; line-height:1;">I love you, Leah.</h1>
+                    <p style="font-size:22px;color:#9d174d;margin:0 0 8px;">— Ishaan 💌</p>
+                    <p style="font-size:18px;color:#831843;margin:18px auto;max-width:480px;line-height:1.5;">No curses. No glitches. Just this little page, quietly telling you the truth: every version of you, on every day, is my favourite. 🌸</p>
+                    <button onclick="closeLoveYouPage()" style="margin-top:24px;padding:12px 28px;background:#fff;border:3px solid #831843;border-radius:14px;font-family:inherit;font-size:18px;font-weight:bold;color:#831843;cursor:pointer;box-shadow:4px 4px 0 #831843;">back to the scrapbook 💞</button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+
+            const heartsLayer = overlay.querySelector('#loveHearts');
+            const emojis = ['💖','💗','💞','💕','🌸','✨','💌'];
+            for (let i = 0; i < 24; i++) {
+                const h = document.createElement('div');
+                h.className = 'love-heart';
+                h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                h.style.left = Math.random() * 100 + 'vw';
+                h.style.animationDelay = (Math.random() * 7) + 's';
+                h.style.animationDuration = (5 + Math.random() * 5) + 's';
+                h.style.fontSize = (18 + Math.random() * 26) + 'px';
+                heartsLayer.appendChild(h);
+            }
+        }
+
+        function closeLoveYouPage() {
+            const ov = document.getElementById('loveYouOverlay');
+            if (ov) ov.remove();
+        }
+        window.closeLoveYouPage = closeLoveYouPage;
 
         // =========================================================================
         // MODULE 8: CAKE PROTECTION GRID
