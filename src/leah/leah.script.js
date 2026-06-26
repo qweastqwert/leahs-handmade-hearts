@@ -855,6 +855,12 @@
 
         function closePolaroid() { document.getElementById('polaroidReviewCard').classList.add('hidden'); }
 
+        function playLeahVoiceLine() {
+            const a = document.getElementById('leahVoiceLine');
+            if (!a) return;
+            try { a.currentTime = 0; a.play().catch(() => showCustomToast('Tap again', 'Browser blocked autoplay — tap once more 💕', '🔊')); } catch (e) {}
+        }
+
         function copyCupcakeReview() {
             const title = document.getElementById('critiqueTitle').innerText;
             const desc = document.getElementById('critiqueDescription').innerText;
