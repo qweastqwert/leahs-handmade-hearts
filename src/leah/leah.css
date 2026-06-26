@@ -122,3 +122,146 @@
             border-radius: 8px;
             border: 3px solid #fdfbf7;
         }
+
+        /* ============================================================
+           HANDMADE DOODLE — SHARED CONSISTENCY UTILITIES
+           ============================================================ */
+        :root {
+            --ink: #2d2d2d;
+            --paper: #fdfbf7;
+            --paper-warm: #fff8ec;
+            --doodle-radius-a: 22px 38px 18px 34px / 30px 18px 36px 22px;
+            --doodle-radius-b: 36px 14px 32px 18px / 18px 34px 16px 32px;
+        }
+        /* Use to give any block the same handmade torn-paper feel as .doodle-card */
+        .doodle-frame {
+            background: #ffffff;
+            border: 3px solid var(--ink);
+            border-radius: var(--doodle-radius-a);
+            box-shadow: 5px 6px 0 0 var(--ink);
+            position: relative;
+        }
+        .doodle-frame.alt { border-radius: var(--doodle-radius-b); }
+        .doodle-wobble { animation: doodle-wobble 5.5s ease-in-out infinite; transform-origin: center; }
+        @keyframes doodle-wobble {
+            0%, 100% { transform: rotate(-0.6deg); }
+            50%      { transform: rotate(0.6deg); }
+        }
+        .marker-underline {
+            background-image: linear-gradient(180deg, transparent 62%, rgba(251, 191, 36, 0.55) 62%, rgba(251, 191, 36, 0.55) 90%, transparent 90%);
+            padding: 0 0.15em;
+        }
+        .dashed-doodle { border: 2.5px dashed var(--ink); }
+        .ink-shadow    { text-shadow: 2px 2px 0 rgba(45,45,45,0.12); }
+
+        /* ============================================================
+           FINALE — MAGICAL ASCENSION
+           ============================================================ */
+        /* Button: pulsing aurora halo around the ascension trigger */
+        .ascend-button {
+            position: relative;
+            isolation: isolate;
+            background: linear-gradient(135deg, #fde68a 0%, #fbcfe8 45%, #c4b5fd 100%);
+            background-size: 220% 220%;
+            animation: ascend-button-flow 6s ease infinite, ascend-button-bob 3.4s ease-in-out infinite;
+        }
+        .ascend-button::before {
+            content: ""; position: absolute; inset: -10px; z-index: -1;
+            border-radius: 22px;
+            background: conic-gradient(from 0deg, #fbbf24, #f472b6, #a78bfa, #60a5fa, #fbbf24);
+            filter: blur(14px); opacity: 0.55;
+            animation: ascend-halo-spin 7s linear infinite;
+        }
+        @keyframes ascend-button-flow { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+        @keyframes ascend-button-bob  { 0%,100%{transform:translateY(0) rotate(-0.5deg)} 50%{transform:translateY(-4px) rotate(0.5deg)} }
+        @keyframes ascend-halo-spin   { to { transform: rotate(360deg); } }
+
+        /* Cinematic backdrop: aurora wash + warm dawn behind starfield */
+        .finale-backdrop {
+            background:
+                radial-gradient(circle at 20% 25%, rgba(253, 230, 138, 0.55), transparent 55%),
+                radial-gradient(circle at 80% 30%, rgba(244, 114, 182, 0.45), transparent 55%),
+                radial-gradient(circle at 50% 90%, rgba(167, 139, 250, 0.5), transparent 60%),
+                linear-gradient(180deg, #fff8ec 0%, #fdfbf7 60%, #f5edff 100%);
+            background-size: 200% 200%;
+            animation: finale-aurora 14s ease-in-out infinite alternate;
+        }
+        @keyframes finale-aurora { 0%{background-position:0% 0%} 100%{background-position:100% 100%} }
+
+        /* Hand-drawn sun rays radiating from the crown */
+        .finale-rays {
+            position: absolute; inset: 0; pointer-events: none;
+            background:
+                repeating-conic-gradient(from 0deg at 50% 38%,
+                    rgba(251, 191, 36, 0.18) 0deg 6deg,
+                    transparent 6deg 18deg);
+            mask-image: radial-gradient(circle at 50% 38%, black 0%, black 35%, transparent 70%);
+            -webkit-mask-image: radial-gradient(circle at 50% 38%, black 0%, black 35%, transparent 70%);
+            animation: finale-rays-spin 30s linear infinite;
+            opacity: 0; transition: opacity 1.6s ease;
+        }
+        .finale-rays.on { opacity: 1; }
+        @keyframes finale-rays-spin { to { transform: rotate(360deg); } }
+
+        /* Crown: gentle float + glow halo */
+        .finale-crown {
+            position: relative;
+            box-shadow: 4px 4px 0 0 var(--ink), 0 0 0 0 rgba(251,191,36,0);
+            animation: finale-crown-float 3.6s ease-in-out infinite;
+        }
+        .finale-crown.bloom {
+            animation: finale-crown-float 3.6s ease-in-out infinite, finale-crown-bloom 2.4s ease-out forwards;
+        }
+        @keyframes finale-crown-float { 0%,100%{transform:translateY(-2px) rotate(-2deg)} 50%{transform:translateY(4px) rotate(2deg)} }
+        @keyframes finale-crown-bloom {
+            0%   { box-shadow: 4px 4px 0 0 var(--ink), 0 0 0 0 rgba(251,191,36,0); }
+            60%  { box-shadow: 4px 4px 0 0 var(--ink), 0 0 90px 30px rgba(251,191,36,0.55); }
+            100% { box-shadow: 4px 4px 0 0 var(--ink), 0 0 50px 14px rgba(251,191,36,0.35); }
+        }
+
+        /* Title: shimmering gradient that sweeps across handwritten letters */
+        .finale-title {
+            background: linear-gradient(100deg, #2d2d2d 0%, #2d2d2d 35%, #f59e0b 50%, #db2777 60%, #2d2d2d 75%, #2d2d2d 100%);
+            background-size: 250% 100%;
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: finale-title-shimmer 4.5s ease-in-out infinite;
+        }
+        @keyframes finale-title-shimmer { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+
+        /* Envelope seal: wax stamp that breaks open */
+        .finale-seal {
+            position: absolute; top: -22px; left: 50%; transform: translateX(-50%) rotate(-6deg);
+            width: 56px; height: 56px; border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #f87171, #b91c1c 70%);
+            border: 3px solid var(--ink);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff8ec; font-family: 'Caveat', cursive; font-size: 28px; font-weight: 800;
+            box-shadow: 2px 3px 0 0 var(--ink);
+            transition: transform 0.9s cubic-bezier(0.6,-0.3,0.7,1.6), opacity 0.6s ease 0.4s;
+            z-index: 5;
+        }
+        .finale-seal.broken { transform: translate(-160%, 80%) rotate(-35deg) scale(0.9); opacity: 0; }
+
+        /* Hand-drawn sparkle burst */
+        .finale-sparkle {
+            position: absolute; pointer-events: none; font-family: 'Caveat', cursive;
+            color: #fbbf24; font-size: 26px; opacity: 0;
+            animation: finale-sparkle 1.6s ease-out forwards;
+            text-shadow: 0 0 8px rgba(251,191,36,0.6);
+        }
+        @keyframes finale-sparkle {
+            0%   { opacity: 0; transform: scale(0.2) rotate(0deg); }
+            30%  { opacity: 1; transform: scale(1.2) rotate(30deg); }
+            100% { opacity: 0; transform: scale(0.6) translateY(-40px) rotate(180deg); }
+        }
+
+        /* Ribbon banner under crown */
+        .finale-ribbon {
+            display: inline-block; padding: 6px 22px;
+            background: #fde68a; border: 3px solid var(--ink);
+            font-family: 'Caveat', cursive; font-weight: 800; font-size: 1.05rem;
+            color: var(--ink); transform: rotate(-2deg);
+            box-shadow: 3px 3px 0 0 var(--ink);
+            clip-path: polygon(6% 0, 94% 0, 100% 50%, 94% 100%, 6% 100%, 0 50%);
+        }
