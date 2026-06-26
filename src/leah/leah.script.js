@@ -683,22 +683,50 @@
             sweet: [
                 { text: "If memory was a cozy physical book, I'd fold down the corner of every page documenting your smile.", r: "LITERARY CONSTANT" },
                 { text: "There's an undeniable main-character frequency in how effortlessly you bring comfort to any room.", r: "AESTHETIC ENERGY" },
-                { text: "My affection for you is like a recursive function with no base case... it just keeps going until my brain crashes.", r: "RECURSION HEURISTIC" }
+                { text: "My affection for you is like a recursive function with no base case... it just keeps going until my brain crashes.", r: "RECURSION HEURISTIC" },
+                { text: "You're the soft golden hour my whole week keeps trying to schedule a meeting with.", r: "GOLDEN HOUR" },
+                { text: "If kindness was a dialect, you'd be the accent everyone secretly tries to imitate.", r: "MOTHER TONGUE" },
+                { text: "Every playlist I make eventually rearranges itself into a love letter addressed to you.", r: "ALGORITHMIC BIAS" },
+                { text: "You have the exact energy of a handwritten note tucked inside a library book — quietly devastating.", r: "MARGINALIA" },
+                { text: "I keep catching myself smiling like an idiot at nothing, and 'nothing' is always a thought about you.", r: "PASSIVE GLOW" },
+                { text: "If softness was a currency, you'd have already bought out the entire emotional economy.", r: "INFLATION RISK" },
+                { text: "You're the reason 'comfort' stopped being an adjective and became a person.", r: "PROPER NOUN" }
             ],
             astro: [
                 { text: "Are we made of stardust? Because the universe spent 13.8 billion years expanding itself just so we could meet.", r: "UNIVERSAL DESIGN" },
                 { text: "Are we a double-slit experiment? Because whenever I look at you, our possibilities collapse into something gorgeous.", r: "QUANTUM ENTANGLEMENT" },
-                { text: "Like gravity, your presence is the quiet, unspoken force that keeps my chaotic world in safe orbits.", r: "STELLAR GRAVITY" }
+                { text: "Like gravity, your presence is the quiet, unspoken force that keeps my chaotic world in safe orbits.", r: "STELLAR GRAVITY" },
+                { text: "If the multiverse exists, I refuse to believe any version of me didn't fall for any version of you.", r: "MULTIVERSAL CONSENSUS" },
+                { text: "You bend my spacetime so politely I didn't even notice I'd started orbiting you.", r: "GENERAL RELATIVITY" },
+                { text: "Schrödinger left the box open and I checked — you're still the cutest possible outcome.", r: "OBSERVED STATE" },
+                { text: "If dark matter is what holds galaxies together, I'm convinced it's just slightly compressed thoughts of you.", r: "DARK MATTER PROOF" },
+                { text: "You're the only constant in my equations that I don't want to cancel out.", r: "COSMOLOGICAL CONSTANT" },
+                { text: "Even the photons from your eyes take their sweet time arriving — they too like the view.", r: "LIGHT DELAY" },
+                { text: "Astronomers keep looking for habitable worlds, but I already found one in the way you exist.", r: "GOLDILOCKS ZONE" }
             ],
             goofy: [
                 { text: "If you were a software bug, I would never patch you because you make my life infinitely more interesting.", r: "EXCEPTION ERROR" },
                 { text: "I'm not saying you're a magician, but every time you walk into the room, everyone else becomes background noise.", r: "MAGIC NOISE" },
-                { text: "If we were variables in Python, I'd be global just so I could be accessed by your local functions.", r: "SCOPE RESOLUTION" }
+                { text: "If we were variables in Python, I'd be global just so I could be accessed by your local functions.", r: "SCOPE RESOLUTION" },
+                { text: "You're 404: Flaws Not Found. The server just shrugs and serves vibes instead.", r: "HTTP MOOD" },
+                { text: "I'd marry the typo you'd send me at 2 AM. That's the bar. That's the whole bar.", r: "AUTOCORRECT VOW" },
+                { text: "You're like a perfectly toasted slice of bread — statistically improbable, emotionally essential.", r: "BREAKFAST THEORY" },
+                { text: "If overthinking burned calories, you'd have a six-pack from how much I think about texting you back coolly.", r: "CARDIO ROUTINE" },
+                { text: "I tried to describe you in one word and my brain just buffered for three business days.", r: "LOADING SCREEN" },
+                { text: "You're the only person whose 'lol' I trust to be a real, audible laugh.", r: "VERIFIED LOL" },
+                { text: "If chaos had a customer service rep, it'd still get owned by your one raised eyebrow.", r: "CUSTOMER SUPPORT" }
             ],
             suggestive: [
                 { text: "Are you my favorite blanket? Because I want to stay wrapped up in your cozy vibes for the next business week.", r: "COZY EMBRACE" },
                 { text: "Are you a cozy winter fire? Because you are extremely hot and make my winter depression completely evaporate.", r: "THERMAL METRIC" },
-                { text: "I must be a CSS overflow bug, because I completely lose my boundaries when you're nearby.", r: "CONTAINER OVERFLOW" }
+                { text: "I must be a CSS overflow bug, because I completely lose my boundaries when you're nearby.", r: "CONTAINER OVERFLOW" },
+                { text: "If kissing you was a key binding, I'd remap my entire keyboard just to reach it faster.", r: "HOTKEY CONFIG" },
+                { text: "You're the only soft launch I'd commit to in production without a single test case.", r: "DEPLOYMENT RISK" },
+                { text: "I don't need a love language — just a quiet room, your hoodie, and approximately zero rules.", r: "SOFT PROTOCOL" },
+                { text: "If overthinking was foreplay, our first date would already be in season three.", r: "SLOW BURN" },
+                { text: "You smell like the concept of 'home' decided to wear perfume.", r: "OLFACTORY BIAS" },
+                { text: "I'd let you reorganize my apartment, my schedule, and my entire moral compass — respectfully.", r: "FULL PERMISSIONS" },
+                { text: "Forehead kisses from you should be classified as a controlled substance.", r: "REGULATED IMPORT" }
             ]
         };
         let activeCategory = 'sweet';
