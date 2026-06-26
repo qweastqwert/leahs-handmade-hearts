@@ -851,9 +851,16 @@
             const card = document.getElementById('polaroidReviewCard');
             card.classList.remove('hidden');
             card.scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => { try { playLeahVoiceLine(); } catch(e){} }, 450);
         }
 
         function closePolaroid() { document.getElementById('polaroidReviewCard').classList.add('hidden'); }
+
+        function playLeahVoiceLine() {
+            const a = document.getElementById('leahVoiceLine');
+            if (!a) return;
+            try { a.currentTime = 0; a.play().catch(() => showCustomToast('Tap again', 'Browser blocked autoplay — tap once more 💕', '🔊')); } catch (e) {}
+        }
 
         function copyCupcakeReview() {
             const title = document.getElementById('critiqueTitle').innerText;
@@ -1079,9 +1086,9 @@
         // MODULE 5: COMPLIMENT SLOT MACHINE
         // =========================================================================
         const slotRolls = [
-            ["Leah's smile", "Her kind presence", "The cosmic focus", "Quiet stargazing", "A comfy laugh", "Her direct energy", "The atomic alignment", "A clever critique", "A cozy kitchen wave", "Her absolute aura"],
-            ["spontaneously clears", "comfortably brightens", "instantly orbits", "restructures the local", "perfectly aligns", "beautifully matches", "naturally establishes", "effortlessly stabilizes", "decisively guides", "pleasantly warms"],
-            ["any storm vector.", "every busy room.", "all chaotic thoughts.", "into happy records.", "with gentle light.", "with cozy velvet layers.", "the surrounding galaxy.", "the complete matrix.", "our quantum entanglement.", "beyond stellar limits."]
+            ["Leah's smile", "Her kind presence", "The cosmic focus", "Quiet stargazing", "A comfy laugh", "Her direct energy", "The atomic alignment", "A clever critique", "A cozy kitchen wave", "Her absolute aura", "Her sleepy yawn", "Leah's playlist", "A 2am voicenote", "Her hoodie hugs", "That tilted head smirk", "Leah's handwriting", "Her midnight rant", "Her caffeine arc", "A single Leah giggle", "Her shower-thought theorem"],
+            ["spontaneously clears", "comfortably brightens", "instantly orbits", "restructures the local", "perfectly aligns", "beautifully matches", "naturally establishes", "effortlessly stabilizes", "decisively guides", "pleasantly warms", "quietly rewires", "tenderly softens", "casually outshines", "lovingly redecorates", "secretly fuels", "magnetically pulls", "delicately untangles", "absurdly improves", "ridiculously beautifies", "criminally upgrades"],
+            ["any storm vector.", "every busy room.", "all chaotic thoughts.", "into happy records.", "with gentle light.", "with cozy velvet layers.", "the surrounding galaxy.", "the complete matrix.", "our quantum entanglement.", "beyond stellar limits.", "the entire timeline.", "Ishaan's whole week.", "the laws of vibes.", "every Monday morning.", "this dumb little planet.", "the airport queue.", "the group chat.", "the spotify algorithm.", "my serotonin levels.", "the concept of bedtime."]
         ];
         let slotRolling = false;
 
@@ -1105,19 +1112,29 @@
                 if (steps >= 15) {
                     clearInterval(interval);
                     slotRolling = false;
-                    
+                    const tierEl = document.getElementById('slotTierText');
+
                     if (r1 === "Leah's smile" && r2 === "comfortably brightens" && r3 === "every busy room.") {
-                        document.getElementById('slotTierText').innerText = `Tier: SPECIAL AURA JACKPOT!`;
-                        document.getElementById('slotTierText').className = `text-xs font-bold uppercase tracking-wide bg-yellow-100 border-2 border-yellow-500 px-3 py-1 rounded-full shadow-[2px_2px_0px_0px_#2d2d2d] animate-bounce`;
+                        tierEl.innerText = `Tier: SPECIAL AURA JACKPOT!`;
+                        tierEl.className = `text-xs font-bold uppercase tracking-wide bg-yellow-100 border-2 border-yellow-500 px-3 py-1 rounded-full shadow-[2px_2px_0px_0px_#2d2d2d] animate-bounce`;
                         earnReward(100, 10, 'slots');
                         if (state.hasSynthesizer) { synth.playLevelUp(); }
+                    } else if (r1 === "Her absolute aura" && r2 === "perfectly aligns" && r3 === "the complete matrix.") {
+                        tierEl.innerText = `Tier: ✨ STELLAR ALIGNMENT ✨`;
+                        tierEl.className = `text-xs font-bold uppercase tracking-wide bg-purple-100 border-2 border-purple-600 text-purple-800 px-3 py-1 rounded-full shadow-[2px_2px_0px_0px_#2d2d2d] animate-bounce`;
+                        earnReward(150, 15, 'slots');
+                        if (state.hasSynthesizer) { synth.playLevelUp(); }
+                        showCustomToast("STELLAR ALIGNMENT", "I'm the Gift you ungrateful idiot 🎁", '💢');
+                        setTimeout(() => {
+                            showCustomToast("...okay okay", "jk text me and receive your grant 💌", '😘');
+                        }, 3200);
                     } else {
                         const tiers = ["COMMON", "RARE", "MYTHIC", "GOLDEN COZY CONSTANT"];
                         const tierColors = ["text-stone-500", "text-blue-600 font-bold", "text-purple-600 font-extrabold", "text-yellow-600 font-black animate-pulse"];
                         const rollIdx = Math.floor(Math.random() * tiers.length);
-                        
-                        document.getElementById('slotTierText').innerText = `Tier: ${tiers[rollIdx]} ASSEMBLED`;
-                        document.getElementById('slotTierText').className = `text-xs font-bold uppercase tracking-wide bg-white border border-stone-300 px-3 py-1 rounded-full shadow-[2px_2px_0px_0px_#2d2d2d] ${tierColors[rollIdx]}`;
+
+                        tierEl.innerText = `Tier: ${tiers[rollIdx]} ASSEMBLED`;
+                        tierEl.className = `text-xs font-bold uppercase tracking-wide bg-white border border-stone-300 px-3 py-1 rounded-full shadow-[2px_2px_0px_0px_#2d2d2d] ${tierColors[rollIdx]}`;
 
                         triggerAchievement('ach_slot');
                         earnReward(30, 2, 'slots');
@@ -1295,20 +1312,23 @@
         function pressRedButton() {
             state.redButtonClicks++;
             
-            if (state.redButtonClicks >= 250) {
+            if (state.redButtonClicks >= 1000) {
                 state.redButtonClicks = 0;
                 document.getElementById('redClicksVal').innerText = `0 PARADOX CLICKS`;
-                
+
+                // Fully revert the site to normal — no curses
                 document.body.style.transform = "none";
                 document.body.style.filter = "none";
+                document.body.style.backgroundColor = "";
                 document.body.classList.remove('chaotic-shake', 'zoom-pulse');
                 document.documentElement.classList.remove('invert');
                 document.body.style.fontFamily = "'Patrick Hand', cursive";
-                
+                bgStars.forEach(s => { if (s.baseSpeed) s.speed = s.baseSpeed; });
+
                 document.getElementById('theActualRedButton').className = "w-28 h-28 rounded-full bg-red-500 border-4 border-stone-800 hover:bg-red-400 active:scale-90 transition-all flex items-center justify-center text-white text-4xl shadow-[4px_4px_0px_0px_#2d2d2d] select-none";
-                document.getElementById('redStatusText').innerText = "Universal reset triggered! Reality is restored to gorgeous clean layouts.";
-                
-                showCustomToast('Reality Repaired', 'Pristine layout parameters restored successfully.', '🌟');
+                document.getElementById('redStatusText').innerText = "Reality restored. Clicks reset. 💞";
+
+                showLoveYouPage();
                 if (state.hasSynthesizer) { synth.playLevelUp(); }
                 return;
             }
@@ -1354,11 +1374,61 @@
                 status.innerText = "Scribble textures are warping wildly! High frequency energy!";
                 document.body.style.filter = "blur(0.8px) invert(0.8) hue-rotate(90deg)";
             } else if (state.redButtonClicks === 200) {
-                status.innerText = "Almost at maximum click parameters. Universal restoration incoming soon!";
-            } else if (state.redButtonClicks === 240) {
-                status.innerText = "Glitches reaching peak saturation! 10 clicks to absolute reboot.";
+                status.innerText = "The chaos has plateaued. Keep going — something tender lives at 1000.";
+            } else if (state.redButtonClicks === 500) {
+                status.innerText = "Halfway. The universe is humming a love song under its breath.";
+            } else if (state.redButtonClicks === 900) {
+                status.innerText = "100 clicks left. The curse is lifting…";
+            } else if (state.redButtonClicks === 990) {
+                status.innerText = "10 more. Close your eyes a little.";
             }
         }
+
+        function showLoveYouPage() {
+            // remove any existing
+            const existing = document.getElementById('loveYouOverlay');
+            if (existing) existing.remove();
+
+            const overlay = document.createElement('div');
+            overlay.id = 'loveYouOverlay';
+            overlay.style.cssText = "position:fixed;inset:0;z-index:99999;background:radial-gradient(circle at 50% 40%, #fff1f5 0%, #ffe4ec 45%, #fbcfe8 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;font-family:'Patrick Hand', cursive;animation:loveFadeIn 0.8s ease-out;overflow:hidden;";
+            overlay.innerHTML = `
+                <style>
+                    @keyframes loveFadeIn { from { opacity:0; transform:scale(1.04); } to { opacity:1; transform:scale(1); } }
+                    @keyframes loveHeartFloat { 0% { transform: translateY(100vh) scale(0.6); opacity:0; } 10% { opacity:1; } 100% { transform: translateY(-20vh) scale(1.1); opacity:0; } }
+                    @keyframes loveBeat { 0%,100% { transform:scale(1); } 50% { transform:scale(1.08); } }
+                    .love-heart { position:absolute; font-size:28px; animation: loveHeartFloat 7s linear infinite; }
+                </style>
+                <div style="position:absolute;inset:0;pointer-events:none;" id="loveHearts"></div>
+                <div style="text-align:center;padding:40px;max-width:640px;position:relative;z-index:2;">
+                    <div style="font-size:96px;animation:loveBeat 1.4s ease-in-out infinite;">💖</div>
+                    <h1 style="font-family:'Caveat', 'Patrick Hand', cursive; font-size:84px; color:#be185d; margin:12px 0 8px; line-height:1;">I love you, Leah.</h1>
+                    <p style="font-size:22px;color:#9d174d;margin:0 0 8px;">— Ishaan 💌</p>
+                    <p style="font-size:18px;color:#831843;margin:18px auto;max-width:480px;line-height:1.5;">No curses. No glitches. Just this little page, quietly telling you the truth: every version of you, on every day, is my favourite. 🌸</p>
+                    <button onclick="closeLoveYouPage()" style="margin-top:24px;padding:12px 28px;background:#fff;border:3px solid #831843;border-radius:14px;font-family:inherit;font-size:18px;font-weight:bold;color:#831843;cursor:pointer;box-shadow:4px 4px 0 #831843;">back to the scrapbook 💞</button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+
+            const heartsLayer = overlay.querySelector('#loveHearts');
+            const emojis = ['💖','💗','💞','💕','🌸','✨','💌'];
+            for (let i = 0; i < 24; i++) {
+                const h = document.createElement('div');
+                h.className = 'love-heart';
+                h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                h.style.left = Math.random() * 100 + 'vw';
+                h.style.animationDelay = (Math.random() * 7) + 's';
+                h.style.animationDuration = (5 + Math.random() * 5) + 's';
+                h.style.fontSize = (18 + Math.random() * 26) + 'px';
+                heartsLayer.appendChild(h);
+            }
+        }
+
+        function closeLoveYouPage() {
+            const ov = document.getElementById('loveYouOverlay');
+            if (ov) ov.remove();
+        }
+        window.closeLoveYouPage = closeLoveYouPage;
 
         // =========================================================================
         // MODULE 8: CAKE PROTECTION GRID
