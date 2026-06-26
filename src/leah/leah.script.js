@@ -851,6 +851,7 @@
             const card = document.getElementById('polaroidReviewCard');
             card.classList.remove('hidden');
             card.scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => { try { playLeahVoiceLine(); } catch(e){} }, 450);
         }
 
         function closePolaroid() { document.getElementById('polaroidReviewCard').classList.add('hidden'); }
