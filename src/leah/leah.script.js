@@ -1312,20 +1312,23 @@
         function pressRedButton() {
             state.redButtonClicks++;
             
-            if (state.redButtonClicks >= 250) {
+            if (state.redButtonClicks >= 1000) {
                 state.redButtonClicks = 0;
                 document.getElementById('redClicksVal').innerText = `0 PARADOX CLICKS`;
-                
+
+                // Fully revert the site to normal — no curses
                 document.body.style.transform = "none";
                 document.body.style.filter = "none";
+                document.body.style.backgroundColor = "";
                 document.body.classList.remove('chaotic-shake', 'zoom-pulse');
                 document.documentElement.classList.remove('invert');
                 document.body.style.fontFamily = "'Patrick Hand', cursive";
-                
+                bgStars.forEach(s => { if (s.baseSpeed) s.speed = s.baseSpeed; });
+
                 document.getElementById('theActualRedButton').className = "w-28 h-28 rounded-full bg-red-500 border-4 border-stone-800 hover:bg-red-400 active:scale-90 transition-all flex items-center justify-center text-white text-4xl shadow-[4px_4px_0px_0px_#2d2d2d] select-none";
-                document.getElementById('redStatusText').innerText = "Universal reset triggered! Reality is restored to gorgeous clean layouts.";
-                
-                showCustomToast('Reality Repaired', 'Pristine layout parameters restored successfully.', '🌟');
+                document.getElementById('redStatusText').innerText = "Reality restored. Clicks reset. 💞";
+
+                showLoveYouPage();
                 if (state.hasSynthesizer) { synth.playLevelUp(); }
                 return;
             }
