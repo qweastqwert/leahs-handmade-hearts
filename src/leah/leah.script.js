@@ -1080,13 +1080,34 @@
                 return;
             }
 
-            bossCtx.fillStyle = '#0f172a'; 
+            // Soft cozy nebula gradient backdrop
+            const bg = bossCtx.createLinearGradient(0, 0, 0, bossCanvas.height);
+            bg.addColorStop(0, '#0b1024');
+            bg.addColorStop(1, '#1e1b4b');
+            bossCtx.fillStyle = bg;
             bossCtx.fillRect(0, 0, bossCanvas.width, bossCanvas.height);
 
-            // Draw grid guidelines
-            bossCtx.strokeStyle = 'rgba(147, 197, 253, 0.07)';
+            // Parallax starfield (twinkles + drifts upward)
+            bossStars.forEach(st => {
+                st.y -= st.s;
+                if (st.y < 0) { st.y = bossCanvas.height; st.x = Math.random() * bossCanvas.width; }
+                bossCtx.fillStyle = `rgba(255, 255, 240, ${st.a * (0.6 + 0.4 * Math.sin(Date.now()*0.003 + st.x))})`;
+                bossCtx.beginPath();
+                bossCtx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
+                bossCtx.fill();
+            });
+
+            // Wave / difficulty scales with bossScore (1..5)
+            const wave = Math.min(1 + Math.floor(bossScore / 6), 5);
+            bossCtx.font = '11px Patrick Hand';
+            bossCtx.fillStyle = 'rgba(253, 224, 71, 0.9)';
+            bossCtx.textAlign = 'left';
+            bossCtx.fillText('WAVE ' + wave, 8, 14);
+
+            // Subtle grid guidelines
+            bossCtx.strokeStyle = 'rgba(147, 197, 253, 0.06)';
             bossCtx.lineWidth = 1;
-            for (let i = 0; i < bossCanvas.width; i += 20) {
+            for (let i = 0; i < bossCanvas.width; i += 24) {
                 bossCtx.beginPath(); bossCtx.moveTo(i, 0); bossCtx.lineTo(i, bossCanvas.height); bossCtx.stroke();
             }
 
