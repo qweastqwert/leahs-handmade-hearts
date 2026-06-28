@@ -1838,42 +1838,101 @@
         // =========================================================================
         // MODULE 12: HISTORICAL RECORDS MUSEUM EXHIBITS & DYNAMIC PARADOX
         // =========================================================================
+        const museumExhibitsUsed = new Set();
+        function _maybeMuseumAch(tag) {
+            museumExhibitsUsed.add(tag);
+            if (museumExhibitsUsed.size >= 3) triggerAchievement('ach_museum');
+        }
+
+        function flipPolaroid(el) {
+            const flipped = el.getAttribute('data-flipped') === 'true';
+            el.setAttribute('data-flipped', flipped ? 'false' : 'true');
+            el.classList.toggle('is-flipped', !flipped);
+            if (state.hasSynthesizer) synth.playTone(flipped ? 320 : 540, 'sine', 0.08, 0.04);
+        }
+        window.flipPolaroid = flipPolaroid;
+
         function triggerAuraScan() {
             if (state.hasSynthesizer) { synth.playTone(600, 'triangle', 0.1, 0.04); }
             const status = document.getElementById('auraScanStatus');
+            const bar = document.getElementById('auraScanBar');
             status.innerText = "Analyzing aura metrics...";
-            
-            setTimeout(() => {
-                if (state.hasSynthesizer) { synth.playLevelUp(); }
-                status.innerText = "9,999,999+ Aura Points (Sovereign Tier) ✨";
-                earnReward(15, 2, 'museum');
-            }, 1500);
+            let pct = 0;
+            const tiers = ['Cozy', 'Stellar', 'Cosmic', 'Sovereign', 'Off the charts'];
+            const ramp = setInterval(() => {
+                pct = Math.min(pct + Math.random() * 6 + 2, 100);
+                if (bar) bar.style.width = pct.toFixed(0) + '%';
+                status.innerText = `Scanning… ${pct.toFixed(0)}%`;
+                if (state.hasSynthesizer && pct % 20 < 6) synth.playTone(420 + pct * 4, 'sine', 0.04, 0.02);
+                if (pct >= 100) {
+                    clearInterval(ramp);
+                    const tier = tiers[Math.floor(Math.random() * tiers.length)];
+                    status.innerText = `9,999,999+ Aura · ${tier} Tier ✨`;
+                    if (state.hasSynthesizer) synth.playLevelUp();
+                    earnReward(15, 2, 'museum');
+                    _maybeMuseumAch('aura');
+                }
+            }, 80);
         }
 
+        const _chessMoves = [
+            ['Leah: Pawn → e4', 'Thunder: ⚡ strike on d5 (illegal)', 'leah'],
+            ['Leah: Knight → f3', 'Thunder: rolls a thunderclap (skipped turn)', 'leah'],
+            ['Leah: Bishop → c4', 'Thunder: floods the board (draw)', 'draw'],
+            ['Leah: Queen → h5', 'Thunder: shatters the queen mid-air', 'storm'],
+            ['Leah: Castles kingside', 'Thunder: roof explodes (legal??)', 'leah'],
+            ['Leah: Pawn → d4', 'Thunder: backwards lightning (??)', 'leah'],
+            ['Leah: Knight → c3', 'Thunder: hails on a3 → a4', 'storm'],
+            ['Leah: Rook → e1', 'Thunder: discharges into the rook', 'storm'],
+        ];
+        let _chessScores = { leah: 0, storm: 0 };
         function playChessAgainstThunder() {
-            if (state.hasSynthesizer) { synth.playTone(180, 'sawtooth', 0.15, 0.04); }
-            showCustomToast('Chess Move', 'Leah moves Pawn to E4. Thunder responds with a lightning bolt onto D5!', '♟️');
+            if (state.hasSynthesizer) { synth.playTone(180 + Math.random()*200, 'sawtooth', 0.15, 0.04); }
+            const m = _chessMoves[Math.floor(Math.random() * _chessMoves.length)];
+            if (m[2] === 'leah') _chessScores.leah++;
+            else if (m[2] === 'storm') _chessScores.storm++;
+            const log = document.getElementById('chessLog');
+            if (log) {
+                const div = document.createElement('div');
+                div.innerHTML = `&gt; ${m[0]} <span class="text-amber-700">→ ${m[1]}</span>`;
+                if (log.firstChild && log.firstChild.textContent && log.firstChild.textContent.startsWith('—')) log.innerHTML = '';
+                log.prepend(div);
+                while (log.childNodes.length > 6) log.removeChild(log.lastChild);
+            }
+            const ls = document.getElementById('chessLeahScore');
+            const ss = document.getElementById('chessStormScore');
+            if (ls) ls.textContent = _chessScores.leah;
+            if (ss) ss.textContent = _chessScores.storm;
             earnReward(10, 1, 'museum');
+            _maybeMuseumAch('chess');
         }
 
         function spinParadoxGauge() {
             if (state.hasSynthesizer) { synth.playTone(320, 'triangle', 0.3, 0.08); }
             const label = document.getElementById('paradoxGaugeVal');
+            const needle = document.getElementById('paradoxNeedle');
             label.innerText = "Spinning Timeline...";
-            
-            setTimeout(() => {
-                const paradoxPct = Math.floor(Math.random() * 100) + 1;
-                let desc = "Stable (0%)";
-                if (paradoxPct > 80) {
-                    desc = `CRITICAL DETECTED (${paradoxPct}%): Leah gaslit gravity!`;
-                } else if (paradoxPct > 40) {
-                    desc = `UNSTABLE (${paradoxPct}%): A dinosaur is singing sonnets.`;
-                } else {
-                    desc = `MILD (${paradoxPct}%): Sourdough rises 2x speed.`;
+            let t = 0;
+            const target = Math.random() * 720 + 540; // multiple rotations
+            const startTime = performance.now();
+            function step(now) {
+                t = now - startTime;
+                const eased = 1 - Math.pow(1 - Math.min(t / 1400, 1), 3);
+                const ang = eased * target;
+                if (needle) needle.style.transform = `rotate(${ang}deg)`;
+                if (t < 1400) requestAnimationFrame(step);
+                else {
+                    const paradoxPct = Math.floor(Math.random() * 100) + 1;
+                    let desc;
+                    if (paradoxPct > 80) desc = `CRITICAL (${paradoxPct}%): Leah gaslit gravity!`;
+                    else if (paradoxPct > 40) desc = `UNSTABLE (${paradoxPct}%): A dinosaur sings sonnets.`;
+                    else desc = `MILD (${paradoxPct}%): Sourdough rises 2x speed.`;
+                    label.innerText = `Gauge: ${desc}`;
+                    earnReward(8, 1, 'museum');
+                    _maybeMuseumAch('paradox');
                 }
-                label.innerText = `Gauge: ${desc}`;
-                earnReward(8, 1, 'museum');
-            }, 1000);
+            }
+            requestAnimationFrame(step);
         }
 
         // =========================================================================
