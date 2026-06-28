@@ -62,7 +62,7 @@
         const achievementsList = [
             { id: 'ach_join', title: 'Curious Explorer', desc: 'Slipped into Leah\'s interactive Birthday Dimension.', hint: 'Always unlocked.', icon: '🪐' },
             { id: 'ach_rizz', title: 'Cosmic Poet', desc: 'Rated and appreciated sweet astrophysical compliments.', hint: 'Find the Poetic Lines Arena.', icon: '✉️' },
-            { id: 'ach_stare', title: 'Absolute Eye-Lock', desc: 'Maintained mesmerizing eye contact for 5+ seconds.', hint: 'Hold down focus in the Eye Contact room.', icon: '🤎' },
+            { id: 'ach_museum', title: 'Curator of Leah', desc: 'Activated all three museum exhibits.', hint: 'Open the Historical Museum and try each widget.', icon: '🏛️' },
             { id: 'ach_slot', title: 'Jackpot Master', desc: 'Pulled the slot lever until the reels aligned.', hint: 'Spin the slots in the casino.', icon: '🎰' },
             { id: 'ach_cupcake', title: 'Master Baker', desc: 'Assembled a perfect customized cupcake creation.', hint: 'Decorate and Present in the Cozy Bakery.', icon: '🧁' },
             { id: 'ach_button_10', title: 'Paradox Seeker', desc: 'Pressed the suspicious Red Button 10 times.', hint: 'Click the Red Button repeatedly.', icon: '🛑' },
@@ -415,7 +415,7 @@
             decaySaturationsGlobal();
 
             // Clear all modal viewports to guarantee clean transition without overlays
-            const modals = ['modalZen', 'modalPickup', 'modalCupcake', 'modalGojo', 'modalSlot', 'modalBoss', 'modalRedButton', 'modalCakeDefense', 'modalConstellation', 'modalHarmony', 'modalCringe', 'modalTemple', 'modalMuseum', 'modalSpeedrun', 'modalWish'];
+            const modals = ['modalZen', 'modalPickup', 'modalCupcake', 'modalSlot', 'modalBoss', 'modalRedButton', 'modalCakeDefense', 'modalConstellation', 'modalHarmony', 'modalCringe', 'modalTemple', 'modalMuseum', 'modalSpeedrun', 'modalWish'];
             modals.forEach(id => {
                 const element = document.getElementById(id);
                 if (element) element.classList.add('hidden');
@@ -423,7 +423,7 @@
 
             const map = {
                 'zoneZen': 'modalZen', 'zonePickup': 'modalPickup', 'zoneCupcake': 'modalCupcake',
-                'zoneGojo': 'modalGojo', 'zoneSlot': 'modalSlot', 'zoneBoss': 'modalBoss',
+                'zoneSlot': 'modalSlot', 'zoneBoss': 'modalBoss',
                 'zoneRedButton': 'modalRedButton', 'zoneCakeDefense': 'modalCakeDefense',
                 'zoneConstellation': 'modalConstellation', 'zoneHarmony': 'modalHarmony',
                 'zoneCringe': 'modalCringe', 'zoneTemple': 'modalTemple', 'zoneMuseum': 'modalMuseum',
@@ -435,7 +435,6 @@
                 document.getElementById(target).classList.remove('hidden');
                 document.getElementById('dashboardHub').classList.add('hidden');
                 
-                if (zoneId === 'zoneGojo') initGojoGame();
                 if (zoneId === 'zoneBoss') startBossGame();
                 if (zoneId === 'zoneCakeDefense') initCakeDefense();
                 if (zoneId === 'zoneConstellation') initConstellationGame();
@@ -452,7 +451,7 @@
             
             const map = {
                 'zoneZen': 'modalZen', 'zonePickup': 'modalPickup', 'zoneCupcake': 'modalCupcake',
-                'zoneGojo': 'modalGojo', 'zoneSlot': 'modalSlot', 'zoneBoss': 'modalBoss',
+                'zoneSlot': 'modalSlot', 'zoneBoss': 'modalBoss',
                 'zoneRedButton': 'modalRedButton', 'zoneCakeDefense': 'modalCakeDefense',
                 'zoneConstellation': 'modalConstellation', 'zoneHarmony': 'modalHarmony',
                 'zoneCringe': 'modalCringe', 'zoneTemple': 'modalTemple', 'zoneMuseum': 'modalMuseum',
@@ -466,7 +465,6 @@
                 if (cakeInterval) clearInterval(cakeInterval);
             }
             if (zoneId === 'zoneBoss') { state.bossGameActive = false; }
-            if (zoneId === 'zoneGojo') { stopStaring(); gojoGameActive = false; }
             if (zoneId === 'zoneConstellation') { state.constellationActive = false; }
             if (zoneId === 'zoneSpeedrun') { state.speedrunActive = false; }
         }
@@ -543,54 +541,92 @@
             requestAnimationFrame(drawZenFrame);
         }
 
-        // Trigger Rhodes Ambient Chords
+        // Trigger Rhodes Ambient Chords (expanded jazz palette + occasional sub-bass swell)
         function triggerCafeChord() {
             if (!state.hasSynthesizer || !state.audioCtx || state.soundAmbiences.cafeVolume <= 0) return;
             try {
                 const chords = [
-                    [130.81, 164.81, 196.00, 246.94], // Cmaj7
-                    [146.83, 174.61, 220.00, 261.63, 329.63], // Dmin9
-                    [174.61, 220.00, 261.63, 329.63], // Fmaj7
-                    [196.00, 233.08, 293.66, 349.23]  // G7
+                    [130.81, 164.81, 196.00, 246.94],                 // Cmaj7
+                    [146.83, 174.61, 220.00, 261.63, 329.63],         // Dmin9
+                    [174.61, 220.00, 261.63, 329.63],                 // Fmaj7
+                    [196.00, 233.08, 293.66, 349.23],                 // G7
+                    [110.00, 164.81, 220.00, 277.18],                 // Am7
+                    [123.47, 155.56, 196.00, 233.08, 293.66],         // Bm7♭5add9
+                    [98.00, 130.81, 196.00, 246.94, 311.13],          // Gadd9
+                    [87.31, 130.81, 174.61, 261.63]                   // F6 wide voicing
                 ];
                 const selectedChord = chords[Math.floor(Math.random() * chords.length)];
+                const oscType = Math.random() < 0.35 ? 'triangle' : 'sine';
                 selectedChord.forEach((freq, idx) => {
                     setTimeout(() => {
                         if (state.soundAmbiences.cafeVolume <= 0) return;
                         const osc = state.audioCtx.createOscillator();
                         const gain = state.audioCtx.createGain();
-                        osc.type = 'sine';
+                        osc.type = oscType;
+                        // tiny detune for warmth
+                        osc.detune.setValueAtTime((Math.random() - 0.5) * 6, state.audioCtx.currentTime);
                         osc.frequency.setValueAtTime(freq, state.audioCtx.currentTime);
-                        
                         gain.gain.setValueAtTime(0, state.audioCtx.currentTime);
                         gain.gain.linearRampToValueAtTime(state.soundAmbiences.cafeVolume * 0.04, state.audioCtx.currentTime + 0.5);
-                        gain.gain.exponentialRampToValueAtTime(0.001, state.audioCtx.currentTime + 3.0);
-                        
+                        gain.gain.exponentialRampToValueAtTime(0.001, state.audioCtx.currentTime + 3.4);
                         osc.connect(gain);
                         gain.connect(state.audioCtx.destination);
                         osc.start();
-                        osc.stop(state.audioCtx.currentTime + 3.5);
-                    }, idx * 150); 
+                        osc.stop(state.audioCtx.currentTime + 3.6);
+                    }, idx * (120 + Math.random() * 90));
                 });
+                // ~25% chance: deep sub-bass swell for warmth
+                if (Math.random() < 0.25) {
+                    const sub = state.audioCtx.createOscillator();
+                    const sg = state.audioCtx.createGain();
+                    sub.type = 'sine';
+                    sub.frequency.setValueAtTime(selectedChord[0] / 2, state.audioCtx.currentTime);
+                    sg.gain.setValueAtTime(0, state.audioCtx.currentTime);
+                    sg.gain.linearRampToValueAtTime(state.soundAmbiences.cafeVolume * 0.05, state.audioCtx.currentTime + 1.0);
+                    sg.gain.exponentialRampToValueAtTime(0.001, state.audioCtx.currentTime + 4.5);
+                    sub.connect(sg); sg.connect(state.audioCtx.destination);
+                    sub.start(); sub.stop(state.audioCtx.currentTime + 4.7);
+                }
             } catch(e) {}
         }
 
+        // Pentatonic chime palette (A-minor pentatonic across 3 octaves) for variety
+        const _chimePalette = [220, 261.63, 293.66, 329.63, 392.00, 440, 523.25, 587.33, 659.25, 783.99, 880, 1046.5, 1318.5, 1568];
         function triggerChimes() {
             const chimesVolume = document.getElementById('slideChimes').value / 100;
             if (!state.hasSynthesizer || !state.audioCtx || chimesVolume <= 0) return;
             try {
-                const pitch = 1500 + Math.random() * 1000;
-                const osc = state.audioCtx.createOscillator();
-                const gain = state.audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(pitch, state.audioCtx.currentTime);
-                gain.gain.setValueAtTime(0, state.audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(chimesVolume * 0.05, state.audioCtx.currentTime + 0.05);
-                gain.gain.exponentialRampToValueAtTime(0.001, state.audioCtx.currentTime + 1.2);
-                osc.connect(gain);
-                gain.connect(state.audioCtx.destination);
-                osc.start();
-                osc.stop(state.audioCtx.currentTime + 1.5);
+                // Sometimes play a little 2-3 note cluster instead of one chime
+                const cluster = Math.random() < 0.45 ? (Math.random() < 0.5 ? 2 : 3) : 1;
+                for (let i = 0; i < cluster; i++) {
+                    setTimeout(() => {
+                        const pitch = _chimePalette[Math.floor(Math.random() * _chimePalette.length)];
+                        const types = ['sine', 'sine', 'triangle']; // mostly sine, occasional bell-y
+                        const osc = state.audioCtx.createOscillator();
+                        const gain = state.audioCtx.createGain();
+                        osc.type = types[Math.floor(Math.random() * types.length)];
+                        osc.frequency.setValueAtTime(pitch, state.audioCtx.currentTime);
+                        gain.gain.setValueAtTime(0, state.audioCtx.currentTime);
+                        gain.gain.linearRampToValueAtTime(chimesVolume * 0.05, state.audioCtx.currentTime + 0.04);
+                        gain.gain.exponentialRampToValueAtTime(0.001, state.audioCtx.currentTime + 1.6);
+                        osc.connect(gain);
+                        gain.connect(state.audioCtx.destination);
+                        osc.start();
+                        osc.stop(state.audioCtx.currentTime + 1.8);
+                        // ~20% chance: shimmering harmonic an octave up at low volume
+                        if (Math.random() < 0.2) {
+                            const h = state.audioCtx.createOscillator();
+                            const hg = state.audioCtx.createGain();
+                            h.type = 'sine';
+                            h.frequency.setValueAtTime(pitch * 2, state.audioCtx.currentTime);
+                            hg.gain.setValueAtTime(0, state.audioCtx.currentTime);
+                            hg.gain.linearRampToValueAtTime(chimesVolume * 0.018, state.audioCtx.currentTime + 0.05);
+                            hg.gain.exponentialRampToValueAtTime(0.001, state.audioCtx.currentTime + 2.0);
+                            h.connect(hg); hg.connect(state.audioCtx.destination);
+                            h.start(); h.stop(state.audioCtx.currentTime + 2.1);
+                        }
+                    }, i * (180 + Math.random() * 220));
+                }
             } catch(e) {}
         }
 
@@ -624,21 +660,28 @@
             state.soundAmbiences.cafeVolume = cafeVal;
             state.audioCtx = synth.ctx;
 
-            if (cafeVal > 0 && !state.soundAmbiences.cafeInterval) {
-                triggerCafeChord();
-                state.soundAmbiences.cafeInterval = setInterval(triggerCafeChord, 5000);
-            } else if (cafeVal <= 0 && state.soundAmbiences.cafeInterval) {
-                clearInterval(state.soundAmbiences.cafeInterval);
-                state.soundAmbiences.cafeInterval = null;
+            // Jittered timers so the loops feel less mechanical
+            function _scheduleCafe() {
+                state.soundAmbiences.cafeInterval = setTimeout(() => {
+                    if (state.soundAmbiences.cafeVolume <= 0) { state.soundAmbiences.cafeInterval = null; return; }
+                    triggerCafeChord();
+                    _scheduleCafe();
+                }, 3500 + Math.random() * 3000);
+            }
+            function _scheduleChimes() {
+                state.soundAmbiences.chimeInterval = setTimeout(() => {
+                    const v = (document.getElementById('slideChimes').value || 0) / 100;
+                    if (v <= 0) { state.soundAmbiences.chimeInterval = null; return; }
+                    triggerChimes();
+                    _scheduleChimes();
+                }, 1800 + Math.random() * 2600);
             }
 
-            if (chimesVal > 0 && !state.soundAmbiences.chimeInterval) {
-                triggerChimes();
-                state.soundAmbiences.chimeInterval = setInterval(triggerChimes, 3000);
-            } else if (chimesVal <= 0 && state.soundAmbiences.chimeInterval) {
-                clearInterval(state.soundAmbiences.chimeInterval);
-                state.soundAmbiences.chimeInterval = null;
-            }
+            if (cafeVal > 0 && !state.soundAmbiences.cafeInterval) { triggerCafeChord(); _scheduleCafe(); }
+            else if (cafeVal <= 0 && state.soundAmbiences.cafeInterval) { clearTimeout(state.soundAmbiences.cafeInterval); state.soundAmbiences.cafeInterval = null; }
+
+            if (chimesVal > 0 && !state.soundAmbiences.chimeInterval) { triggerChimes(); _scheduleChimes(); }
+            else if (chimesVal <= 0 && state.soundAmbiences.chimeInterval) { clearTimeout(state.soundAmbiences.chimeInterval); state.soundAmbiences.chimeInterval = null; }
         }
         document.getElementById('slideWind').addEventListener('input', updateAmbiences);
         document.getElementById('slideOcean').addEventListener('input', updateAmbiences);
@@ -905,210 +948,9 @@
         }
 
         // =========================================================================
-        // MODULE 4: EYE CONTACT WITH YOUR FAV (COZY ART STYLE IRIS SHADING)
+        // MODULE 4: (removed — Eye Contact Room retired)
         // =========================================================================
-        let gojoCanvas, gojoCtx;
-        let gojoTime = 0;
-        let isStaring = false;
-        let gojoInterval = null;
-        let cursorX = 150, cursorY = 80;
-        let gojoParticles = []; 
-        let gojoGameActive = false;
-        let eyeStyle = 'espresso';
 
-        function changeEyePalette() {
-            if (state.hasSynthesizer) { synth.playTone(390, 'sine', 0.05, 0.04); }
-            eyeStyle = document.getElementById('eyePaletteSelector').value;
-        }
-
-        function expressEyeReaction() {
-            if (state.hasSynthesizer) { synth.playTone(600, 'triangle', 0.15, 0.05); }
-            showCustomToast('Wink Expressed', 'The hand-drawn eyes blink warmly, emitting little stars!', '😉');
-            earnReward(5, 1, 'stare');
-        }
-
-        function initGojoGame() {
-            gojoCanvas = document.getElementById('gojoCanvas');
-            gojoCtx = gojoCanvas.getContext('2d');
-            gojoCanvas.width = gojoCanvas.offsetWidth;
-            gojoCanvas.height = 192;
-            
-            gojoGameActive = true;
-            gojoParticles = [];
-            cursorX = gojoCanvas.width / 2;
-            cursorY = gojoCanvas.height / 2;
-
-            gojoCanvas.onmousemove = (e) => {
-                const rect = gojoCanvas.getBoundingClientRect();
-                cursorX = e.clientX - rect.left;
-                cursorY = e.clientY - rect.top;
-            };
-            gojoCanvas.ontouchmove = (e) => {
-                const rect = gojoCanvas.getBoundingClientRect();
-                cursorX = e.touches[0].clientX - rect.left;
-                cursorY = e.touches[0].clientY - rect.top;
-            };
-
-            for (let i = 0; i < 4; i++) { spawnGojoDistraction(); }
-
-            const btn = document.getElementById('btnGojoStare');
-            btn.onmousedown = startStaring;
-            btn.onmouseup = stopStaring;
-            btn.onmouseleave = stopStaring;
-            btn.ontouchstart = (e) => { e.preventDefault(); startStaring(); };
-            btn.ontouchend = (e) => { e.preventDefault(); stopStaring(); };
-
-            runGojoFrame();
-        }
-
-        function spawnGojoDistraction() {
-            gojoParticles.push({
-                x: Math.random() * gojoCanvas.width,
-                y: Math.random() * gojoCanvas.height,
-                radius: Math.random() * 12 + 10,
-                speedX: (Math.random() - 0.5) * 1.5,
-                speedY: (Math.random() - 0.5) * 1.5,
-                text: ['Doubt', 'Chores', 'Stress', 'Clouds', 'Noises'][Math.floor(Math.random() * 5)]
-            });
-        }
-
-        function startStaring() {
-            if (isStaring) return;
-            isStaring = true;
-            gojoInterval = setInterval(() => {
-                gojoTime += 0.05;
-                document.getElementById('gojoTimeVal').innerText = `${gojoTime.toFixed(2)}s`;
-                const progress = Math.min((gojoTime / 5) * 100, 100);
-                document.getElementById('gojoTimerBar').style.width = `${progress}%`;
-                
-                if (Math.round(gojoTime * 10) % 5 === 0 && state.hasSynthesizer) {
-                    synth.playTone(280 + gojoTime * 20, 'sine', 0.1, 0.03);
-                }
-                if (gojoTime >= 5) {
-                    triggerAchievement('ach_stare');
-                    earnReward(10, 1, 'stare');
-                }
-            }, 50);
-        }
-
-        function stopStaring() {
-            if (!isStaring) return;
-            isStaring = false;
-            clearInterval(gojoInterval);
-            gojoTime = 0;
-            document.getElementById('gojoTimerBar').style.width = '0%';
-            document.getElementById('gojoTimeVal').innerText = `0.00s`;
-        }
-
-        function runGojoFrame() {
-            if (!gojoGameActive || document.getElementById('modalGojo').classList.contains('hidden')) {
-                gojoGameActive = false;
-                return;
-            }
-
-            gojoCtx.fillStyle = '#1e293b'; 
-            gojoCtx.fillRect(0, 0, gojoCanvas.width, gojoCanvas.height);
-
-            const w = gojoCanvas.width;
-            const h = gojoCanvas.height;
-
-            drawSingleBrownEye(w * 0.3, h * 0.5);
-            drawSingleBrownEye(w * 0.7, h * 0.5);
-
-            if (isStaring) {
-                gojoCtx.fillStyle = '#fde047'; 
-                gojoCtx.font = '14px Patrick Hand';
-                gojoCtx.textAlign = 'center';
-                gojoCtx.fillText("Expressing absolute fascination... 🤎", w / 2, h - 20);
-            }
-
-            gojoParticles.forEach((p, idx) => {
-                p.x += p.speedX;
-                p.y += p.speedY;
-
-                if (p.x < 0 || p.x > w) p.speedX *= -1;
-                if (p.y < 0 || p.y > h) p.speedY *= -1;
-
-                gojoCtx.fillStyle = 'rgba(239, 68, 68, 0.2)';
-                gojoCtx.beginPath();
-                gojoCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                gojoCtx.fill();
-                gojoCtx.strokeStyle = '#ef4444';
-                gojoCtx.lineWidth = 1.5;
-                gojoCtx.stroke();
-
-                gojoCtx.fillStyle = '#ffffff';
-                gojoCtx.font = '12px Patrick Hand';
-                gojoCtx.textAlign = 'center';
-                gojoCtx.fillText(p.text, p.x, p.y + 4);
-
-                const distToCursor = Math.hypot(p.x - cursorX, p.y - cursorY);
-                if (distToCursor < p.radius + 5) {
-                    gojoParticles.splice(idx, 1);
-                    if (state.hasSynthesizer) { synth.playTone(700, 'sine', 0.05, 0.03); }
-                    spawnGojoDistraction();
-                    earnReward(4, 1, 'stare');
-                }
-            });
-
-            requestAnimationFrame(runGojoFrame);
-        }
-
-        function drawSingleBrownEye(cx, cy) {
-            gojoCtx.fillStyle = '#f8fafc';
-            gojoCtx.beginPath();
-            gojoCtx.ellipse(cx, cy, 38, 19, 0, 0, Math.PI * 2);
-            gojoCtx.fill();
-            gojoCtx.strokeStyle = '#475569'; 
-            gojoCtx.lineWidth = 3;
-            gojoCtx.stroke();
-
-            const dx = cursorX - cx;
-            const dy = cursorY - cy;
-            const dist = Math.hypot(dx, dy);
-            const maxTrack = 10;
-            const trackX = dist > 0 ? (dx / dist) * Math.min(dist, maxTrack) : 0;
-            const trackY = dist > 0 ? (dy / dist) * Math.min(dist, maxTrack) : 0;
-
-            const pulse = isStaring ? 4 + Math.sin(Date.now() * 0.015) * 3 : 0;
-            let grad = gojoCtx.createRadialGradient(cx + trackX, cy + trackY, 2, cx + trackX, cy + trackY, 16 + pulse);
-            
-            if (eyeStyle === 'espresso') {
-                grad.addColorStop(0, '#fef08a'); 
-                grad.addColorStop(0.35, '#78350f'); 
-                grad.addColorStop(0.85, '#451a03'); 
-            } else if (eyeStyle === 'starry') {
-                grad.addColorStop(0, '#fde047');
-                grad.addColorStop(0.4, '#ca8a04');
-                grad.addColorStop(0.85, '#854d0e');
-            } else if (eyeStyle === 'electric') {
-                grad.addColorStop(0, '#67e8f9');
-                grad.addColorStop(0.4, '#06b6d4');
-                grad.addColorStop(0.85, '#0891b2');
-            }
-            grad.addColorStop(1, 'transparent');
-
-            gojoCtx.fillStyle = grad;
-            gojoCtx.beginPath();
-            gojoCtx.arc(cx + trackX, cy + trackY, 18, 0, Math.PI * 2);
-            gojoCtx.fill();
-
-            gojoCtx.strokeStyle = '#27272a';
-            gojoCtx.lineWidth = 1.5;
-            gojoCtx.stroke();
-
-            const pupilSize = isStaring ? 9 : 6;
-            gojoCtx.fillStyle = '#1e293b';
-            gojoCtx.beginPath();
-            gojoCtx.arc(cx + trackX, cy + trackY, pupilSize, 0, Math.PI * 2);
-            gojoCtx.fill();
-
-            gojoCtx.fillStyle = '#ffffff';
-            gojoCtx.beginPath();
-            gojoCtx.arc(cx + trackX - 4, cy + trackY - 4, 3.5, 0, Math.PI * 2);
-            gojoCtx.arc(cx + trackX + 5, cy + trackY + 4, 1.8, 0, Math.PI * 2);
-            gojoCtx.fill();
-        }
 
         // =========================================================================
         // MODULE 5: COMPLIMENT SLOT MACHINE
@@ -1182,6 +1024,7 @@
         let sparklesPool = [];    
         let shieldMissiles = [];  
         let activeShipSkin = 'cyber';
+        let bossStars = [];
 
         function changeShipSkin() {
             activeShipSkin = document.getElementById('shipSkinSelector').value;
@@ -1200,6 +1043,16 @@
             bossProjectiles = [];
             sparklesPool = [];
             shieldMissiles = [];
+            bossStars = [];
+            for (let i = 0; i < 60; i++) {
+                bossStars.push({
+                    x: Math.random() * bossCanvas.width,
+                    y: Math.random() * bossCanvas.height,
+                    r: Math.random() * 1.4 + 0.4,
+                    s: Math.random() * 0.6 + 0.15,
+                    a: Math.random() * 0.7 + 0.2
+                });
+            }
             
             document.getElementById('bossHPVal').innerText = `${bossHP}%`;
             document.getElementById('bossScoreVal').innerText = bossScore;
@@ -1227,13 +1080,34 @@
                 return;
             }
 
-            bossCtx.fillStyle = '#0f172a'; 
+            // Soft cozy nebula gradient backdrop
+            const bg = bossCtx.createLinearGradient(0, 0, 0, bossCanvas.height);
+            bg.addColorStop(0, '#0b1024');
+            bg.addColorStop(1, '#1e1b4b');
+            bossCtx.fillStyle = bg;
             bossCtx.fillRect(0, 0, bossCanvas.width, bossCanvas.height);
 
-            // Draw grid guidelines
-            bossCtx.strokeStyle = 'rgba(147, 197, 253, 0.07)';
+            // Parallax starfield (twinkles + drifts upward)
+            bossStars.forEach(st => {
+                st.y -= st.s;
+                if (st.y < 0) { st.y = bossCanvas.height; st.x = Math.random() * bossCanvas.width; }
+                bossCtx.fillStyle = `rgba(255, 255, 240, ${st.a * (0.6 + 0.4 * Math.sin(Date.now()*0.003 + st.x))})`;
+                bossCtx.beginPath();
+                bossCtx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
+                bossCtx.fill();
+            });
+
+            // Wave / difficulty scales with bossScore (1..5)
+            const wave = Math.min(1 + Math.floor(bossScore / 6), 5);
+            bossCtx.font = '11px Patrick Hand';
+            bossCtx.fillStyle = 'rgba(253, 224, 71, 0.9)';
+            bossCtx.textAlign = 'left';
+            bossCtx.fillText('WAVE ' + wave, 8, 14);
+
+            // Subtle grid guidelines
+            bossCtx.strokeStyle = 'rgba(147, 197, 253, 0.06)';
             bossCtx.lineWidth = 1;
-            for (let i = 0; i < bossCanvas.width; i += 20) {
+            for (let i = 0; i < bossCanvas.width; i += 24) {
                 bossCtx.beginPath(); bossCtx.moveTo(i, 0); bossCtx.lineTo(i, bossCanvas.height); bossCtx.stroke();
             }
 
@@ -1272,11 +1146,12 @@
                 });
             });
 
-            if (Math.random() < 0.03) {
-                bossProjectiles.push({ x: Math.random() * bossCanvas.width, y: 0, s: Math.random() * 1.5 + 1.2 });
+            // Spawn obstacles + sparkles, scaled by wave
+            if (Math.random() < 0.02 + wave * 0.008) {
+                bossProjectiles.push({ x: Math.random() * bossCanvas.width, y: 0, s: Math.random() * 1.5 + 1.0 + wave * 0.25 });
             }
-            if (Math.random() < 0.04) {
-                sparklesPool.push({ x: Math.random() * bossCanvas.width, y: 0, s: Math.random() * 1.5 + 1.0 });
+            if (Math.random() < 0.04 + wave * 0.005) {
+                sparklesPool.push({ x: Math.random() * bossCanvas.width, y: 0, s: Math.random() * 1.5 + 1.0 + wave * 0.15 });
             }
 
             // Draw obstacles
@@ -1527,12 +1402,17 @@
             if (cakeInterval) clearInterval(cakeInterval);
             cakeInterval = setInterval(() => {
                 if (!state.cakeGameActive || document.getElementById('modalCakeDefense').classList.contains('hidden')) return;
-                cakeEnemies.push({
-                    x: Math.random() < 0.5 ? 0 : cakeCanvas.width,
-                    y: Math.random() * (cakeCanvas.height - 60) + 30,
-                    speed: Math.random() * 0.4 + 0.3 
-                });
-            }, 2000);
+                // Difficulty wave scales with score: faster, sometimes 2-spawn bursts
+                const wave = 1 + Math.floor(cakeScore / 25);
+                const burst = wave >= 3 && Math.random() < 0.35 ? 2 : 1;
+                for (let b = 0; b < burst; b++) {
+                    cakeEnemies.push({
+                        x: Math.random() < 0.5 ? 0 : cakeCanvas.width,
+                        y: Math.random() * (cakeCanvas.height - 60) + 30,
+                        speed: Math.random() * 0.4 + 0.3 + wave * 0.12
+                    });
+                }
+            }, 1500);
 
             runCakeDefenseFrame();
         }
@@ -1549,21 +1429,44 @@
             const cx = cakeCanvas.width / 2;
             const cy = cakeCanvas.height / 2;
 
-            // Draw hand sketched tier cake
-            cakeCtx.fillStyle = '#fbcfe8';
-            cakeCtx.beginPath();
-            cakeCtx.arc(cx, cy, 32, 0, Math.PI * 2);
-            cakeCtx.fill();
-            cakeCtx.strokeStyle = '#db2777';
-            cakeCtx.lineWidth = 3.5;
-            cakeCtx.stroke();
+            // Pulsing protective aura around the cake
+            const auraR = 50 + Math.sin(Date.now() * 0.004) * 6;
+            const auraGrad = cakeCtx.createRadialGradient(cx, cy, 10, cx, cy, auraR);
+            auraGrad.addColorStop(0, 'rgba(253, 224, 71, 0.35)');
+            auraGrad.addColorStop(1, 'rgba(253, 224, 71, 0)');
+            cakeCtx.fillStyle = auraGrad;
+            cakeCtx.beginPath(); cakeCtx.arc(cx, cy, auraR, 0, Math.PI * 2); cakeCtx.fill();
 
-            // Draw candle
+            // Tiered hand-drawn cake (bottom tier + top tier)
+            cakeCtx.fillStyle = '#f9a8d4'; // bottom tier
+            cakeCtx.beginPath();
+            cakeCtx.ellipse(cx, cy + 14, 42, 14, 0, 0, Math.PI * 2);
+            cakeCtx.fill();
+            cakeCtx.strokeStyle = '#9d174d'; cakeCtx.lineWidth = 2.5; cakeCtx.stroke();
+
+            cakeCtx.fillStyle = '#fbcfe8'; // top tier
+            cakeCtx.beginPath();
+            cakeCtx.ellipse(cx, cy - 6, 28, 12, 0, 0, Math.PI * 2);
+            cakeCtx.fill();
+            cakeCtx.strokeStyle = '#db2777'; cakeCtx.lineWidth = 2.5; cakeCtx.stroke();
+
+            // Sprinkles
+            for (let i = 0; i < 6; i++) {
+                cakeCtx.fillStyle = ['#fde047','#7dd3fc','#86efac','#fda4af'][i % 4];
+                cakeCtx.fillRect(cx - 22 + i * 8, cy + 12 + (i % 2) * 4, 4, 2);
+            }
+
+            // Candle + flickering flame
             cakeCtx.fillStyle = '#38bdf8';
-            cakeCtx.fillRect(cx - 2, cy - 18, 4, 12);
+            cakeCtx.fillRect(cx - 2, cy - 24, 4, 14);
+            const flicker = 3.2 + Math.sin(Date.now() * 0.02) * 0.8;
             cakeCtx.fillStyle = '#f97316';
             cakeCtx.beginPath();
-            cakeCtx.arc(cx, cy - 22, 3.5, 0, Math.PI * 2);
+            cakeCtx.arc(cx, cy - 28, flicker, 0, Math.PI * 2);
+            cakeCtx.fill();
+            cakeCtx.fillStyle = '#fde68a';
+            cakeCtx.beginPath();
+            cakeCtx.arc(cx, cy - 29, flicker - 1.2, 0, Math.PI * 2);
             cakeCtx.fill();
 
             confettiMines.forEach((mine, mIdx) => {
@@ -2041,43 +1944,115 @@
         // =========================================================================
         // MODULE 12: HISTORICAL RECORDS MUSEUM EXHIBITS & DYNAMIC PARADOX
         // =========================================================================
+        const museumExhibitsUsed = new Set();
+        function _maybeMuseumAch(tag) {
+            museumExhibitsUsed.add(tag);
+            if (museumExhibitsUsed.size >= 3) triggerAchievement('ach_museum');
+        }
+
+        function flipPolaroid(el) {
+            const flipped = el.getAttribute('data-flipped') === 'true';
+            el.setAttribute('data-flipped', flipped ? 'false' : 'true');
+            el.classList.toggle('is-flipped', !flipped);
+            if (state.hasSynthesizer) synth.playTone(flipped ? 320 : 540, 'sine', 0.08, 0.04);
+        }
+        window.flipPolaroid = flipPolaroid;
+
         function triggerAuraScan() {
             if (state.hasSynthesizer) { synth.playTone(600, 'triangle', 0.1, 0.04); }
             const status = document.getElementById('auraScanStatus');
+            const bar = document.getElementById('auraScanBar');
             status.innerText = "Analyzing aura metrics...";
-            
-            setTimeout(() => {
-                if (state.hasSynthesizer) { synth.playLevelUp(); }
-                status.innerText = "9,999,999+ Aura Points (Sovereign Tier) ✨";
-                earnReward(15, 2, 'museum');
-            }, 1500);
+            let pct = 0;
+            const tiers = ['Cozy', 'Stellar', 'Cosmic', 'Sovereign', 'Off the charts'];
+            const ramp = setInterval(() => {
+                pct = Math.min(pct + Math.random() * 6 + 2, 100);
+                if (bar) bar.style.width = pct.toFixed(0) + '%';
+                status.innerText = `Scanning… ${pct.toFixed(0)}%`;
+                if (state.hasSynthesizer && pct % 20 < 6) synth.playTone(420 + pct * 4, 'sine', 0.04, 0.02);
+                if (pct >= 100) {
+                    clearInterval(ramp);
+                    const tier = tiers[Math.floor(Math.random() * tiers.length)];
+                    status.innerText = `9,999,999+ Aura · ${tier} Tier ✨`;
+                    if (state.hasSynthesizer) synth.playLevelUp();
+                    earnReward(15, 2, 'museum');
+                    _maybeMuseumAch('aura');
+                }
+            }, 80);
         }
 
+        const _chessMoves = [
+            ['Leah: Pawn → e4', 'Thunder: ⚡ strike on d5 (illegal)', 'leah'],
+            ['Leah: Knight → f3', 'Thunder: rolls a thunderclap (skipped turn)', 'leah'],
+            ['Leah: Bishop → c4', 'Thunder: floods the board (draw)', 'draw'],
+            ['Leah: Queen → h5', 'Thunder: shatters the queen mid-air', 'storm'],
+            ['Leah: Castles kingside', 'Thunder: roof explodes (legal??)', 'leah'],
+            ['Leah: Pawn → d4', 'Thunder: backwards lightning (??)', 'leah'],
+            ['Leah: Knight → c3', 'Thunder: hails on a3 → a4', 'storm'],
+            ['Leah: Rook → e1', 'Thunder: discharges into the rook', 'storm'],
+        ];
+        let _chessScores = { leah: 0, storm: 0 };
         function playChessAgainstThunder() {
-            if (state.hasSynthesizer) { synth.playTone(180, 'sawtooth', 0.15, 0.04); }
-            showCustomToast('Chess Move', 'Leah moves Pawn to E4. Thunder responds with a lightning bolt onto D5!', '♟️');
+            if (state.hasSynthesizer) { synth.playTone(180 + Math.random()*200, 'sawtooth', 0.15, 0.04); }
+            const m = _chessMoves[Math.floor(Math.random() * _chessMoves.length)];
+            if (m[2] === 'leah') _chessScores.leah++;
+            else if (m[2] === 'storm') _chessScores.storm++;
+            const log = document.getElementById('chessLog');
+            if (log) {
+                const div = document.createElement('div');
+                div.innerHTML = `&gt; ${m[0]} <span class="text-amber-700">→ ${m[1]}</span>`;
+                if (log.firstChild && log.firstChild.textContent && log.firstChild.textContent.startsWith('—')) log.innerHTML = '';
+                log.prepend(div);
+                while (log.childNodes.length > 6) log.removeChild(log.lastChild);
+            }
+            const ls = document.getElementById('chessLeahScore');
+            const ss = document.getElementById('chessStormScore');
+            if (ls) ls.textContent = _chessScores.leah;
+            if (ss) ss.textContent = _chessScores.storm;
             earnReward(10, 1, 'museum');
+            _maybeMuseumAch('chess');
         }
 
         function spinParadoxGauge() {
             if (state.hasSynthesizer) { synth.playTone(320, 'triangle', 0.3, 0.08); }
             const label = document.getElementById('paradoxGaugeVal');
+            const needle = document.getElementById('paradoxNeedle');
             label.innerText = "Spinning Timeline...";
-            
-            setTimeout(() => {
-                const paradoxPct = Math.floor(Math.random() * 100) + 1;
-                let desc = "Stable (0%)";
-                if (paradoxPct > 80) {
-                    desc = `CRITICAL DETECTED (${paradoxPct}%): Leah gaslit gravity!`;
-                } else if (paradoxPct > 40) {
-                    desc = `UNSTABLE (${paradoxPct}%): A dinosaur is singing sonnets.`;
-                } else {
-                    desc = `MILD (${paradoxPct}%): Sourdough rises 2x speed.`;
+            let t = 0;
+            const target = Math.random() * 720 + 540; // multiple rotations
+            const startTime = performance.now();
+            function step(now) {
+                t = now - startTime;
+                const eased = 1 - Math.pow(1 - Math.min(t / 1400, 1), 3);
+                const ang = eased * target;
+                if (needle) needle.style.transform = `rotate(${ang}deg)`;
+                if (t < 1400) requestAnimationFrame(step);
+                else {
+                    const paradoxPct = Math.floor(Math.random() * 100) + 1;
+                    let desc;
+                    if (paradoxPct > 80) desc = `CRITICAL (${paradoxPct}%): Leah gaslit gravity!`;
+                    else if (paradoxPct > 40) desc = `UNSTABLE (${paradoxPct}%): A dinosaur sings sonnets.`;
+                    else desc = `MILD (${paradoxPct}%): Sourdough rises 2x speed.`;
+                    label.innerText = `Gauge: ${desc}`;
+                    earnReward(8, 1, 'museum');
+                    _maybeMuseumAch('paradox');
                 }
-                label.innerText = `Gauge: ${desc}`;
-                earnReward(8, 1, 'museum');
-            }, 1000);
+            }
+            requestAnimationFrame(step);
         }
+
+        // History scroller: tap a line to hear a tiny chime + bookmark it
+        document.addEventListener('click', function (e) {
+            const t = e.target;
+            if (t && t.classList && t.classList.contains('history-line')) {
+                if (state.hasSynthesizer) {
+                    const notes = [523.25, 587.33, 659.25, 783.99, 880];
+                    synth.playTone(notes[Math.floor(Math.random() * notes.length)], 'sine', 0.12, 0.04);
+                }
+                t.style.background = 'rgba(251, 191, 36, 0.28)';
+                setTimeout(() => { t.style.background = ''; }, 1200);
+            }
+        });
 
         // =========================================================================
         // MODULE 13: BIRTHDAY SPEEDRUN CHALLENGE REFLEX GAME
@@ -2232,6 +2207,9 @@
             // Stage 5 — continuous gentle sparkle drizzle
             if (cinema._sparkleTimer) clearInterval(cinema._sparkleTimer);
             cinema._sparkleTimer = setInterval(() => burstSparkles(3), 900);
+
+            // Stage 6 — handmade Ishaan stickers peek in around the corners
+            spawnFinaleStickers();
         }
 
         function closeEndingCinematic() {
@@ -2252,6 +2230,11 @@
             letter&& letter.classList.add('translate-y-8', 'opacity-0');
             seal  && seal.classList.remove('broken');
             endingFireworks = [];
+            // Wipe stickers from inside the cinematic so a replay re-spawns cleanly
+            const sl = document.getElementById('finaleSparkleLayer');
+            if (sl) sl.querySelectorAll('.ishaan-sticker').forEach(n => n.remove());
+            // Scatter the stickers across the whole site as a permanent love-graffiti layer
+            try { scatterIshaanStickersAcrossSite(); } catch (e) {}
         }
 
         // Hand-doodled sparkle glyphs that puff around the crown / letter
@@ -2274,6 +2257,113 @@
                 setTimeout(() => s.remove(), 1700);
             }
         }
+
+        // =========================================================================
+        // ISHAAN STICKER LAYER — handmade polaroid stickers of Ishaan's face
+        // Used inside the Birthday Finale as cute peek-ins, and scattered across
+        // the site/games once the finale is closed.
+        // =========================================================================
+        const ISHAAN_STICKERS = [
+            '/__l5e/assets-v1/1e60a0e3-fcfd-473b-a83d-903dcf95c387/ishaan-sticker-1.png',
+            '/__l5e/assets-v1/bd53c163-c142-4e72-a1a1-267552ffdf22/ishaan-sticker-2.png',
+            '/__l5e/assets-v1/5abf351e-49b7-409c-b617-36dc1116bc21/ishaan-sticker-3.png',
+            '/__l5e/assets-v1/1669dd38-d98d-4fb5-a412-748e60091058/ishaan-sticker-4.png'
+        ];
+        const ISHAAN_CAPTIONS = ['hi 💕', 'made for u', '✨ u r loved ✨', 'happy bday', 'mwah', 'ily', 'goofball', 'forever urs'];
+
+        function _makeStickerEl(src, size, rot, caption) {
+            const wrap = document.createElement('div');
+            wrap.className = 'ishaan-sticker';
+            wrap.style.setProperty('--rot', rot + 'deg');
+            wrap.style.width = size + 'px';
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = 'Ishaan';
+            img.loading = 'lazy';
+            img.draggable = false;
+            wrap.appendChild(img);
+            if (caption) {
+                const tag = document.createElement('span');
+                tag.className = 'ishaan-sticker-caption';
+                tag.textContent = caption;
+                wrap.appendChild(tag);
+            }
+            return wrap;
+        }
+
+        function spawnFinaleStickers() {
+            const layer = document.getElementById('finaleSparkleLayer');
+            if (!layer) return;
+            const rect = layer.getBoundingClientRect();
+            ISHAAN_STICKERS.forEach((src, i) => {
+                setTimeout(() => {
+                    const sz = 90 + Math.random() * 50;
+                    const rot = (Math.random() - 0.5) * 30;
+                    const cap = ISHAAN_CAPTIONS[Math.floor(Math.random() * ISHAAN_CAPTIONS.length)];
+                    const el = _makeStickerEl(src, sz, rot, cap);
+                    el.style.position = 'absolute';
+                    // Place along the edges so it doesn't cover the letter
+                    const edge = i % 4;
+                    let left, top;
+                    if (edge === 0) { left = rect.width * 0.05; top = rect.height * (0.15 + Math.random()*0.2); }
+                    else if (edge === 1) { left = rect.width * (0.78 - Math.random()*0.05); top = rect.height * 0.18; }
+                    else if (edge === 2) { left = rect.width * (0.08 + Math.random()*0.1); top = rect.height * 0.7; }
+                    else { left = rect.width * 0.75; top = rect.height * 0.68; }
+                    el.style.left = left + 'px';
+                    el.style.top = top + 'px';
+                    el.classList.add('ishaan-sticker-pop');
+                    layer.appendChild(el);
+                }, 1600 + i * 400);
+            });
+        }
+
+        const ISHAAN_SCATTER_KEY = 'leah_ishaan_scatter_unlocked_v1';
+        function scatterIshaanStickersAcrossSite() {
+            try { localStorage.setItem(ISHAAN_SCATTER_KEY, '1'); } catch (e) {}
+            const root = document.getElementById('scatterLayer') || (() => {
+                const d = document.createElement('div');
+                d.id = 'scatterLayer';
+                d.className = 'scatter-layer';
+                document.body.appendChild(d);
+                return d;
+            })();
+            root.innerHTML = '';
+            // Pick docked sticker positions: small clusters at fixed page anchors
+            const anchors = [
+                { left: '4%',  top: '12%',  size: 72 },
+                { left: '88%', top: '18%',  size: 64 },
+                { left: '6%',  top: '46%',  size: 80 },
+                { left: '90%', top: '54%',  size: 70 },
+                { left: '12%', top: '78%',  size: 66 },
+                { left: '82%', top: '86%',  size: 76 },
+                { left: '46%', top: '94%',  size: 60 }
+            ];
+            anchors.forEach((a, i) => {
+                const src = ISHAAN_STICKERS[i % ISHAAN_STICKERS.length];
+                const rot = (Math.random() - 0.5) * 24;
+                const cap = Math.random() < 0.55 ? ISHAAN_CAPTIONS[Math.floor(Math.random()*ISHAAN_CAPTIONS.length)] : null;
+                const el = _makeStickerEl(src, a.size, rot, cap);
+                el.style.position = 'absolute';
+                el.style.left = a.left;
+                el.style.top = a.top;
+                el.classList.add('ishaan-sticker-pop');
+                el.title = 'tap me 💕';
+                el.addEventListener('click', () => {
+                    el.classList.add('ishaan-sticker-pulse');
+                    if (state.hasSynthesizer) synth.playTone(520 + Math.random()*240, 'sine', 0.08, 0.04);
+                    setTimeout(() => el.classList.remove('ishaan-sticker-pulse'), 700);
+                });
+                root.appendChild(el);
+            });
+        }
+        window.scatterIshaanStickersAcrossSite = scatterIshaanStickersAcrossSite;
+
+        // If a previous session already triggered the finale, restore scatter on load
+        try {
+            if (localStorage.getItem(ISHAAN_SCATTER_KEY) === '1') {
+                window.addEventListener('DOMContentLoaded', () => setTimeout(scatterIshaanStickersAcrossSite, 600));
+            }
+        } catch (e) {}
 
         let endingCanvas, endingCtx, endingStars = [], endingFireworks = [];
 
@@ -2448,16 +2538,13 @@
         })();
 
         // =========================================================================
-        // MODULE 12: THE WISHING LAMP (Leah types wishes → Ishaan's inbox)
+        // MODULE 12: THE WISHING LAMP (Leah types wishes → opens Ishaan's mailto)
         // =========================================================================
-        // Delivery runs through the /api/wish server route. The Web3Forms access
-        // key and recipient email live in server env vars (WEB3FORMS_KEY,
-        // WISH_RECIPIENT_EMAIL) so nothing secret ships to the client bundle
-        // or to GitHub. Set them in .env.local locally and in Vercel project
-        // settings for production.
+        // No third-party service is used. Tapping "Send Wish" opens Leah's default
+        // mail app pre-filled with the wish and addressed to Ishaan. Safe for any
+        // public deployment (no secrets, no GitHub leak risk).
         const WISH_CONFIG = {
-            endpoint: '/api/wish',
-            recipientEmail: 'ishaan210611@gmail.com',  // shown in fallback mailto only
+            recipientEmail: 'ishaan210611@gmail.com',
             subjectPrefix: '🪔 Leah wished:'
         };
         const WISH_STORAGE_KEY = 'leah_wish_history_v1';
@@ -2486,8 +2573,7 @@
             ul.innerHTML = list.map(w => {
                 const safe = String(w.text).replace(/[<>&]/g, c => ({ '<':'&lt;','>':'&gt;','&':'&amp;' }[c]));
                 const date = new Date(w.at).toLocaleString();
-                const status = w.sent ? '✨ sent' : '📭 saved (offline)';
-                return `<li class="border-b border-dashed border-stone-300 pb-1"><span class="text-[10px] font-sans text-stone-500">${date} · ${status}</span><br>${safe}</li>`;
+                return `<li class="border-b border-dashed border-stone-300 pb-1"><span class="text-[10px] font-sans text-stone-500">${date} · 📨 opened mail</span><br>${safe}</li>`;
             }).join('');
         }
 
@@ -2516,7 +2602,7 @@
         }
         window.addWishPrefill = addWishPrefill;
 
-        async function sendWish() {
+        function sendWish() {
             const ta = document.getElementById('wishText');
             const status = document.getElementById('wishStatus');
             const lamp = document.getElementById('wishLamp');
@@ -2536,56 +2622,40 @@
                 setTimeout(() => synth.playTone(987.77, 'triangle', 0.45, 0.08), 140);
             }
 
-            let sent = false;
-            if (status) status.textContent = 'sending…';
-            try {
-                const res = await fetch(WISH_CONFIG.endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                    body: JSON.stringify({ text })
-                });
-                const data = await res.json().catch(() => ({}));
-                sent = !!data.success;
-                if (sent) {
-                    if (status) status.textContent = '✨ delivered to Ishaan';
-                } else if (data.error === 'not_configured') {
-                    // Server env vars missing — fall back to mailto so the wish isn't lost.
-                    const subject = encodeURIComponent(`${WISH_CONFIG.subjectPrefix} ${text.slice(0, 60)}`);
-                    const body = encodeURIComponent(text + '\n\n— sent from Leah\'s birthday site 🪔');
-                    window.location.href = `mailto:${WISH_CONFIG.recipientEmail}?subject=${subject}&body=${body}`;
-                    if (status) status.textContent = '📨 opened mail app — hit Send!';
-                    sent = true;
-                } else {
-                    if (status) status.textContent = '⚠️ delivery failed';
-                }
-            } catch (e) {
-                if (status) status.textContent = '⚠️ network error';
-            }
+            // Build mailto + open the user's default mail app
+            const subject = encodeURIComponent(`${WISH_CONFIG.subjectPrefix} ${text.slice(0, 60)}`);
+            const body = encodeURIComponent(text + '\n\n— sent from Leah\'s birthday site 🪔');
+            const href = `mailto:${WISH_CONFIG.recipientEmail}?subject=${subject}&body=${body}`;
+            // Use a temporary anchor so popup blockers don't interfere
+            const a = document.createElement('a');
+            a.href = href; a.rel = 'noopener'; a.style.display = 'none';
+            document.body.appendChild(a); a.click(); a.remove();
+
+            if (status) status.textContent = '📨 opened your mail app — hit Send to deliver!';
 
             const history = loadWishHistory();
-            history.unshift({ text, at: Date.now(), sent });
+            history.unshift({ text, at: Date.now(), sent: true });
             saveWishHistory(history);
             renderWishHistory();
 
-            if (sent) {
-                showCustomToast('Wish lit ✨', 'Your wish is on its way to Ishaan.', '🪔');
-                ta.value = '';
-                document.getElementById('wishCounter').textContent = '0 / 600';
-                // Floating hearts above the lamp
-                if (lamp) {
-                    const rect = lamp.getBoundingClientRect();
-                    for (let i = 0; i < 5; i++) {
-                        setTimeout(() => {
-                            const h = document.createElement('div');
-                            h.className = 'floating-heart';
-                            h.textContent = '✨';
-                            h.style.left = (rect.left + rect.width / 2 + (Math.random() - 0.5) * 60) + 'px';
-                            h.style.top = (rect.top + window.scrollY) + 'px';
-                            h.style.position = 'absolute';
-                            document.body.appendChild(h);
-                            setTimeout(() => h.remove(), 2100);
-                        }, i * 80);
-                    }
+            showCustomToast('Wish lit ✨', 'Your mail app is open with the wish ready to send.', '🪔');
+            ta.value = '';
+            document.getElementById('wishCounter').textContent = '0 / 600';
+
+            // Floating sparkle hearts above the lamp
+            if (lamp) {
+                const rect = lamp.getBoundingClientRect();
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        const h = document.createElement('div');
+                        h.className = 'floating-heart';
+                        h.textContent = '✨';
+                        h.style.left = (rect.left + rect.width / 2 + (Math.random() - 0.5) * 60) + 'px';
+                        h.style.top = (rect.top + window.scrollY) + 'px';
+                        h.style.position = 'absolute';
+                        document.body.appendChild(h);
+                        setTimeout(() => h.remove(), 2100);
+                    }, i * 80);
                 }
             }
         }
