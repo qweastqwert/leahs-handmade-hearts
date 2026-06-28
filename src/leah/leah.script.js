@@ -2176,6 +2176,113 @@
             }
         }
 
+        // =========================================================================
+        // ISHAAN STICKER LAYER — handmade polaroid stickers of Ishaan's face
+        // Used inside the Birthday Finale as cute peek-ins, and scattered across
+        // the site/games once the finale is closed.
+        // =========================================================================
+        const ISHAAN_STICKERS = [
+            '/__l5e/assets-v1/1e60a0e3-fcfd-473b-a83d-903dcf95c387/ishaan-sticker-1.png',
+            '/__l5e/assets-v1/bd53c163-c142-4e72-a1a1-267552ffdf22/ishaan-sticker-2.png',
+            '/__l5e/assets-v1/5abf351e-49b7-409c-b617-36dc1116bc21/ishaan-sticker-3.png',
+            '/__l5e/assets-v1/1669dd38-d98d-4fb5-a412-748e60091058/ishaan-sticker-4.png'
+        ];
+        const ISHAAN_CAPTIONS = ['hi 💕', 'made for u', '✨ u r loved ✨', 'happy bday', 'mwah', 'ily', 'goofball', 'forever urs'];
+
+        function _makeStickerEl(src, size, rot, caption) {
+            const wrap = document.createElement('div');
+            wrap.className = 'ishaan-sticker';
+            wrap.style.setProperty('--rot', rot + 'deg');
+            wrap.style.width = size + 'px';
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = 'Ishaan';
+            img.loading = 'lazy';
+            img.draggable = false;
+            wrap.appendChild(img);
+            if (caption) {
+                const tag = document.createElement('span');
+                tag.className = 'ishaan-sticker-caption';
+                tag.textContent = caption;
+                wrap.appendChild(tag);
+            }
+            return wrap;
+        }
+
+        function spawnFinaleStickers() {
+            const layer = document.getElementById('finaleSparkleLayer');
+            if (!layer) return;
+            const rect = layer.getBoundingClientRect();
+            ISHAAN_STICKERS.forEach((src, i) => {
+                setTimeout(() => {
+                    const sz = 90 + Math.random() * 50;
+                    const rot = (Math.random() - 0.5) * 30;
+                    const cap = ISHAAN_CAPTIONS[Math.floor(Math.random() * ISHAAN_CAPTIONS.length)];
+                    const el = _makeStickerEl(src, sz, rot, cap);
+                    el.style.position = 'absolute';
+                    // Place along the edges so it doesn't cover the letter
+                    const edge = i % 4;
+                    let left, top;
+                    if (edge === 0) { left = rect.width * 0.05; top = rect.height * (0.15 + Math.random()*0.2); }
+                    else if (edge === 1) { left = rect.width * (0.78 - Math.random()*0.05); top = rect.height * 0.18; }
+                    else if (edge === 2) { left = rect.width * (0.08 + Math.random()*0.1); top = rect.height * 0.7; }
+                    else { left = rect.width * 0.75; top = rect.height * 0.68; }
+                    el.style.left = left + 'px';
+                    el.style.top = top + 'px';
+                    el.classList.add('ishaan-sticker-pop');
+                    layer.appendChild(el);
+                }, 1600 + i * 400);
+            });
+        }
+
+        const ISHAAN_SCATTER_KEY = 'leah_ishaan_scatter_unlocked_v1';
+        function scatterIshaanStickersAcrossSite() {
+            try { localStorage.setItem(ISHAAN_SCATTER_KEY, '1'); } catch (e) {}
+            const root = document.getElementById('scatterLayer') || (() => {
+                const d = document.createElement('div');
+                d.id = 'scatterLayer';
+                d.className = 'scatter-layer';
+                document.body.appendChild(d);
+                return d;
+            })();
+            root.innerHTML = '';
+            // Pick docked sticker positions: small clusters at fixed page anchors
+            const anchors = [
+                { left: '4%',  top: '12%',  size: 72 },
+                { left: '88%', top: '18%',  size: 64 },
+                { left: '6%',  top: '46%',  size: 80 },
+                { left: '90%', top: '54%',  size: 70 },
+                { left: '12%', top: '78%',  size: 66 },
+                { left: '82%', top: '86%',  size: 76 },
+                { left: '46%', top: '94%',  size: 60 }
+            ];
+            anchors.forEach((a, i) => {
+                const src = ISHAAN_STICKERS[i % ISHAAN_STICKERS.length];
+                const rot = (Math.random() - 0.5) * 24;
+                const cap = Math.random() < 0.55 ? ISHAAN_CAPTIONS[Math.floor(Math.random()*ISHAAN_CAPTIONS.length)] : null;
+                const el = _makeStickerEl(src, a.size, rot, cap);
+                el.style.position = 'absolute';
+                el.style.left = a.left;
+                el.style.top = a.top;
+                el.classList.add('ishaan-sticker-pop');
+                el.title = 'tap me 💕';
+                el.addEventListener('click', () => {
+                    el.classList.add('ishaan-sticker-pulse');
+                    if (state.hasSynthesizer) synth.playTone(520 + Math.random()*240, 'sine', 0.08, 0.04);
+                    setTimeout(() => el.classList.remove('ishaan-sticker-pulse'), 700);
+                });
+                root.appendChild(el);
+            });
+        }
+        window.scatterIshaanStickersAcrossSite = scatterIshaanStickersAcrossSite;
+
+        // If a previous session already triggered the finale, restore scatter on load
+        try {
+            if (localStorage.getItem(ISHAAN_SCATTER_KEY) === '1') {
+                window.addEventListener('DOMContentLoaded', () => setTimeout(scatterIshaanStickersAcrossSite, 600));
+            }
+        } catch (e) {}
+
         let endingCanvas, endingCtx, endingStars = [], endingFireworks = [];
 
         function initEndingCanvas() {
