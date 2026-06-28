@@ -541,54 +541,92 @@
             requestAnimationFrame(drawZenFrame);
         }
 
-        // Trigger Rhodes Ambient Chords
+        // Trigger Rhodes Ambient Chords (expanded jazz palette + occasional sub-bass swell)
         function triggerCafeChord() {
             if (!state.hasSynthesizer || !state.audioCtx || state.soundAmbiences.cafeVolume <= 0) return;
             try {
                 const chords = [
-                    [130.81, 164.81, 196.00, 246.94], // Cmaj7
-                    [146.83, 174.61, 220.00, 261.63, 329.63], // Dmin9
-                    [174.61, 220.00, 261.63, 329.63], // Fmaj7
-                    [196.00, 233.08, 293.66, 349.23]  // G7
+                    [130.81, 164.81, 196.00, 246.94],                 // Cmaj7
+                    [146.83, 174.61, 220.00, 261.63, 329.63],         // Dmin9
+                    [174.61, 220.00, 261.63, 329.63],                 // Fmaj7
+                    [196.00, 233.08, 293.66, 349.23],                 // G7
+                    [110.00, 164.81, 220.00, 277.18],                 // Am7
+                    [123.47, 155.56, 196.00, 233.08, 293.66],         // Bm7♭5add9
+                    [98.00, 130.81, 196.00, 246.94, 311.13],          // Gadd9
+                    [87.31, 130.81, 174.61, 261.63]                   // F6 wide voicing
                 ];
                 const selectedChord = chords[Math.floor(Math.random() * chords.length)];
+                const oscType = Math.random() < 0.35 ? 'triangle' : 'sine';
                 selectedChord.forEach((freq, idx) => {
                     setTimeout(() => {
                         if (state.soundAmbiences.cafeVolume <= 0) return;
                         const osc = state.audioCtx.createOscillator();
                         const gain = state.audioCtx.createGain();
-                        osc.type = 'sine';
+                        osc.type = oscType;
+                        // tiny detune for warmth
+                        osc.detune.setValueAtTime((Math.random() - 0.5) * 6, state.audioCtx.currentTime);
                         osc.frequency.setValueAtTime(freq, state.audioCtx.currentTime);
-                        
                         gain.gain.setValueAtTime(0, state.audioCtx.currentTime);
                         gain.gain.linearRampToValueAtTime(state.soundAmbiences.cafeVolume * 0.04, state.audioCtx.currentTime + 0.5);
-                        gain.gain.exponentialRampToValueAtTime(0.001, state.audioCtx.currentTime + 3.0);
-                        
+                        gain.gain.exponentialRampToValueAtTime(0.001, state.audioCtx.currentTime + 3.4);
                         osc.connect(gain);
                         gain.connect(state.audioCtx.destination);
                         osc.start();
-                        osc.stop(state.audioCtx.currentTime + 3.5);
-                    }, idx * 150); 
+                        osc.stop(state.audioCtx.currentTime + 3.6);
+                    }, idx * (120 + Math.random() * 90));
                 });
+                // ~25% chance: deep sub-bass swell for warmth
+                if (Math.random() < 0.25) {
+                    const sub = state.audioCtx.createOscillator();
+                    const sg = state.audioCtx.createGain();
+                    sub.type = 'sine';
+                    sub.frequency.setValueAtTime(selectedChord[0] / 2, state.audioCtx.currentTime);
+                    sg.gain.setValueAtTime(0, state.audioCtx.currentTime);
+                    sg.gain.linearRampToValueAtTime(state.soundAmbiences.cafeVolume * 0.05, state.audioCtx.currentTime + 1.0);
+                    sg.gain.exponentialRampToValueAtTime(0.001, state.audioCtx.currentTime + 4.5);
+                    sub.connect(sg); sg.connect(state.audioCtx.destination);
+                    sub.start(); sub.stop(state.audioCtx.currentTime + 4.7);
+                }
             } catch(e) {}
         }
 
+        // Pentatonic chime palette (A-minor pentatonic across 3 octaves) for variety
+        const _chimePalette = [220, 261.63, 293.66, 329.63, 392.00, 440, 523.25, 587.33, 659.25, 783.99, 880, 1046.5, 1318.5, 1568];
         function triggerChimes() {
             const chimesVolume = document.getElementById('slideChimes').value / 100;
             if (!state.hasSynthesizer || !state.audioCtx || chimesVolume <= 0) return;
             try {
-                const pitch = 1500 + Math.random() * 1000;
-                const osc = state.audioCtx.createOscillator();
-                const gain = state.audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(pitch, state.audioCtx.currentTime);
-                gain.gain.setValueAtTime(0, state.audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(chimesVolume * 0.05, state.audioCtx.currentTime + 0.05);
-                gain.gain.exponentialRampToValueAtTime(0.001, state.audioCtx.currentTime + 1.2);
-                osc.connect(gain);
-                gain.connect(state.audioCtx.destination);
-                osc.start();
-                osc.stop(state.audioCtx.currentTime + 1.5);
+                // Sometimes play a little 2-3 note cluster instead of one chime
+                const cluster = Math.random() < 0.45 ? (Math.random() < 0.5 ? 2 : 3) : 1;
+                for (let i = 0; i < cluster; i++) {
+                    setTimeout(() => {
+                        const pitch = _chimePalette[Math.floor(Math.random() * _chimePalette.length)];
+                        const types = ['sine', 'sine', 'triangle']; // mostly sine, occasional bell-y
+                        const osc = state.audioCtx.createOscillator();
+                        const gain = state.audioCtx.createGain();
+                        osc.type = types[Math.floor(Math.random() * types.length)];
+                        osc.frequency.setValueAtTime(pitch, state.audioCtx.currentTime);
+                        gain.gain.setValueAtTime(0, state.audioCtx.currentTime);
+                        gain.gain.linearRampToValueAtTime(chimesVolume * 0.05, state.audioCtx.currentTime + 0.04);
+                        gain.gain.exponentialRampToValueAtTime(0.001, state.audioCtx.currentTime + 1.6);
+                        osc.connect(gain);
+                        gain.connect(state.audioCtx.destination);
+                        osc.start();
+                        osc.stop(state.audioCtx.currentTime + 1.8);
+                        // ~20% chance: shimmering harmonic an octave up at low volume
+                        if (Math.random() < 0.2) {
+                            const h = state.audioCtx.createOscillator();
+                            const hg = state.audioCtx.createGain();
+                            h.type = 'sine';
+                            h.frequency.setValueAtTime(pitch * 2, state.audioCtx.currentTime);
+                            hg.gain.setValueAtTime(0, state.audioCtx.currentTime);
+                            hg.gain.linearRampToValueAtTime(chimesVolume * 0.018, state.audioCtx.currentTime + 0.05);
+                            hg.gain.exponentialRampToValueAtTime(0.001, state.audioCtx.currentTime + 2.0);
+                            h.connect(hg); hg.connect(state.audioCtx.destination);
+                            h.start(); h.stop(state.audioCtx.currentTime + 2.1);
+                        }
+                    }, i * (180 + Math.random() * 220));
+                }
             } catch(e) {}
         }
 
