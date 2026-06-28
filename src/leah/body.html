@@ -611,49 +611,9 @@
             </div>
         </div>
 
-        <!-- 4. Eye Contact Room Modal -->
-        <div id="modalGojo" class="hidden bg-white border-3 border-stone-800 rounded-3xl p-6 max-w-2xl w-full mx-auto relative shadow-[6px_6px_0px_0px_#2d2d2d]" style="border-radius: 20px 40px 20px 40px/40px 20px 40px 20px;">
-            <div class="sticky-tape"></div>
-            <button onclick="closeZone('zoneGojo')" class="absolute top-4 right-4 text-stone-400 hover:text-stone-900 transition-colors text-3xl font-bold font-sans">×</button>
-            <div class="text-center mb-4">
-                <span class="text-xs font-sketch font-bold bg-amber-100 border-2 border-amber-600 px-3 py-1 rounded-full text-amber-800">MESMERIZED FOCUS</span>
-                <h2 class="font-sketch text-3xl font-bold mt-2 text-stone-900">Eye Contact with your Fav</h2>
-                <p class="text-sm text-stone-500 mt-1">Select an eye styling and hold focus. Soft highlights and starry flares swirl. Hover over distractors to pop them!</p>
-            </div>
+        <!-- (Eye Contact Room removed) -->
 
-            <!-- Style Selector -->
-            <div class="flex flex-col sm:flex-row justify-center items-center gap-3 mb-4 font-sans text-xs font-bold">
-                <span>Select Eye Palette:</span>
-                <select id="eyePaletteSelector" onchange="changeEyePalette()" class="bg-white border-2 border-stone-800 p-1.5 rounded-lg">
-                    <option value="espresso">Mesmerized Dark Espresso 🤎</option>
-                    <option value="starry">Hazel Starry Glow 🌟</option>
-                    <option value="electric">Limitless Electric Blue 👁️</option>
-                </select>
-                <!-- Interaction Reactions -->
-                <button onclick="expressEyeReaction()" class="bg-purple-100 hover:bg-purple-200 border-2 border-stone-800 px-3 py-1.5 rounded-lg shadow-[1px_1px_0px_0px_#2d2d2d]">Express Wink 😉</button>
-            </div>
 
-            <div class="relative bg-[#1c1917] border-3 border-stone-800 rounded-2xl p-4 overflow-hidden flex flex-col items-center">
-                <canvas id="gojoCanvas" class="w-full h-48 rounded-xl bg-gradient-to-b from-stone-950 to-stone-900 border-2 border-stone-700 cursor-crosshair"></canvas>
-                
-                <div class="w-full max-w-xs mt-4">
-                    <div class="flex justify-between text-xs font-bold text-stone-400 mb-1 font-mono">
-                        <span>MESMERIZED DURATION:</span>
-                        <span id="gojoTimeVal">0.00s</span>
-                    </div>
-                    <div class="w-full h-4 bg-stone-800 rounded-full overflow-hidden border-2 border-stone-700 p-0.5">
-                        <div id="gojoTimerBar" class="h-full bg-gradient-to-r from-amber-600 to-amber-300 rounded-full transition-all duration-75" style="width: 0%"></div>
-                    </div>
-                </div>
-                
-                <button id="btnGojoStare" class="mt-4 w-full max-w-xs py-3 bg-white hover:bg-stone-50 text-stone-900 font-bold border-2 border-stone-800 rounded-xl text-sm shadow-[3px_3px_0px_0px_#2d2d2d] active:scale-95 transition-all select-none uppercase tracking-wide">
-                    👀 HOLD EYE CONTACT
-                </button>
-            </div>
-            <div class="mt-4 text-center">
-                <p class="text-[10px] font-bold uppercase tracking-wider font-sans" id="stareAuraSat">Aura Saturation: 0%</p>
-            </div>
-        </div>
 
         <!-- 5. Compliment Slot Machine Modal -->
         <div id="modalSlot" class="hidden bg-white border-3 border-stone-800 rounded-3xl p-6 max-w-2xl w-full mx-auto relative shadow-[6px_6px_0px_0px_#2d2d2d]" style="border-radius: 40px 20px 40px 20px/20px 40px 20px 40px;">
