@@ -2245,16 +2245,13 @@
         })();
 
         // =========================================================================
-        // MODULE 12: THE WISHING LAMP (Leah types wishes → Ishaan's inbox)
+        // MODULE 12: THE WISHING LAMP (Leah types wishes → opens Ishaan's mailto)
         // =========================================================================
-        // Delivery runs through the /api/wish server route. The Web3Forms access
-        // key and recipient email live in server env vars (WEB3FORMS_KEY,
-        // WISH_RECIPIENT_EMAIL) so nothing secret ships to the client bundle
-        // or to GitHub. Set them in .env.local locally and in Vercel project
-        // settings for production.
+        // No third-party service is used. Tapping "Send Wish" opens Leah's default
+        // mail app pre-filled with the wish and addressed to Ishaan. Safe for any
+        // public deployment (no secrets, no GitHub leak risk).
         const WISH_CONFIG = {
-            endpoint: '/api/wish',
-            recipientEmail: 'ishaan210611@gmail.com',  // shown in fallback mailto only
+            recipientEmail: 'ishaan210611@gmail.com',
             subjectPrefix: '🪔 Leah wished:'
         };
         const WISH_STORAGE_KEY = 'leah_wish_history_v1';
@@ -2283,8 +2280,7 @@
             ul.innerHTML = list.map(w => {
                 const safe = String(w.text).replace(/[<>&]/g, c => ({ '<':'&lt;','>':'&gt;','&':'&amp;' }[c]));
                 const date = new Date(w.at).toLocaleString();
-                const status = w.sent ? '✨ sent' : '📭 saved (offline)';
-                return `<li class="border-b border-dashed border-stone-300 pb-1"><span class="text-[10px] font-sans text-stone-500">${date} · ${status}</span><br>${safe}</li>`;
+                return `<li class="border-b border-dashed border-stone-300 pb-1"><span class="text-[10px] font-sans text-stone-500">${date} · 📨 opened mail</span><br>${safe}</li>`;
             }).join('');
         }
 
@@ -2313,7 +2309,7 @@
         }
         window.addWishPrefill = addWishPrefill;
 
-        async function sendWish() {
+        function sendWish() {
             const ta = document.getElementById('wishText');
             const status = document.getElementById('wishStatus');
             const lamp = document.getElementById('wishLamp');
@@ -2333,56 +2329,40 @@
                 setTimeout(() => synth.playTone(987.77, 'triangle', 0.45, 0.08), 140);
             }
 
-            let sent = false;
-            if (status) status.textContent = 'sending…';
-            try {
-                const res = await fetch(WISH_CONFIG.endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                    body: JSON.stringify({ text })
-                });
-                const data = await res.json().catch(() => ({}));
-                sent = !!data.success;
-                if (sent) {
-                    if (status) status.textContent = '✨ delivered to Ishaan';
-                } else if (data.error === 'not_configured') {
-                    // Server env vars missing — fall back to mailto so the wish isn't lost.
-                    const subject = encodeURIComponent(`${WISH_CONFIG.subjectPrefix} ${text.slice(0, 60)}`);
-                    const body = encodeURIComponent(text + '\n\n— sent from Leah\'s birthday site 🪔');
-                    window.location.href = `mailto:${WISH_CONFIG.recipientEmail}?subject=${subject}&body=${body}`;
-                    if (status) status.textContent = '📨 opened mail app — hit Send!';
-                    sent = true;
-                } else {
-                    if (status) status.textContent = '⚠️ delivery failed';
-                }
-            } catch (e) {
-                if (status) status.textContent = '⚠️ network error';
-            }
+            // Build mailto + open the user's default mail app
+            const subject = encodeURIComponent(`${WISH_CONFIG.subjectPrefix} ${text.slice(0, 60)}`);
+            const body = encodeURIComponent(text + '\n\n— sent from Leah\'s birthday site 🪔');
+            const href = `mailto:${WISH_CONFIG.recipientEmail}?subject=${subject}&body=${body}`;
+            // Use a temporary anchor so popup blockers don't interfere
+            const a = document.createElement('a');
+            a.href = href; a.rel = 'noopener'; a.style.display = 'none';
+            document.body.appendChild(a); a.click(); a.remove();
+
+            if (status) status.textContent = '📨 opened your mail app — hit Send to deliver!';
 
             const history = loadWishHistory();
-            history.unshift({ text, at: Date.now(), sent });
+            history.unshift({ text, at: Date.now(), sent: true });
             saveWishHistory(history);
             renderWishHistory();
 
-            if (sent) {
-                showCustomToast('Wish lit ✨', 'Your wish is on its way to Ishaan.', '🪔');
-                ta.value = '';
-                document.getElementById('wishCounter').textContent = '0 / 600';
-                // Floating hearts above the lamp
-                if (lamp) {
-                    const rect = lamp.getBoundingClientRect();
-                    for (let i = 0; i < 5; i++) {
-                        setTimeout(() => {
-                            const h = document.createElement('div');
-                            h.className = 'floating-heart';
-                            h.textContent = '✨';
-                            h.style.left = (rect.left + rect.width / 2 + (Math.random() - 0.5) * 60) + 'px';
-                            h.style.top = (rect.top + window.scrollY) + 'px';
-                            h.style.position = 'absolute';
-                            document.body.appendChild(h);
-                            setTimeout(() => h.remove(), 2100);
-                        }, i * 80);
-                    }
+            showCustomToast('Wish lit ✨', 'Your mail app is open with the wish ready to send.', '🪔');
+            ta.value = '';
+            document.getElementById('wishCounter').textContent = '0 / 600';
+
+            // Floating sparkle hearts above the lamp
+            if (lamp) {
+                const rect = lamp.getBoundingClientRect();
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        const h = document.createElement('div');
+                        h.className = 'floating-heart';
+                        h.textContent = '✨';
+                        h.style.left = (rect.left + rect.width / 2 + (Math.random() - 0.5) * 60) + 'px';
+                        h.style.top = (rect.top + window.scrollY) + 'px';
+                        h.style.position = 'absolute';
+                        document.body.appendChild(h);
+                        setTimeout(() => h.remove(), 2100);
+                    }, i * 80);
                 }
             }
         }
