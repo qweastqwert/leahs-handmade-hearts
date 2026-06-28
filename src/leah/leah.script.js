@@ -1024,6 +1024,7 @@
         let sparklesPool = [];    
         let shieldMissiles = [];  
         let activeShipSkin = 'cyber';
+        let bossStars = [];
 
         function changeShipSkin() {
             activeShipSkin = document.getElementById('shipSkinSelector').value;
