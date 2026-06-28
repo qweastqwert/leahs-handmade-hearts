@@ -423,7 +423,7 @@
 
             const map = {
                 'zoneZen': 'modalZen', 'zonePickup': 'modalPickup', 'zoneCupcake': 'modalCupcake',
-                'zoneGojo': 'modalGojo', 'zoneSlot': 'modalSlot', 'zoneBoss': 'modalBoss',
+                'zoneSlot': 'modalSlot', 'zoneBoss': 'modalBoss',
                 'zoneRedButton': 'modalRedButton', 'zoneCakeDefense': 'modalCakeDefense',
                 'zoneConstellation': 'modalConstellation', 'zoneHarmony': 'modalHarmony',
                 'zoneCringe': 'modalCringe', 'zoneTemple': 'modalTemple', 'zoneMuseum': 'modalMuseum',
@@ -435,7 +435,6 @@
                 document.getElementById(target).classList.remove('hidden');
                 document.getElementById('dashboardHub').classList.add('hidden');
                 
-                if (zoneId === 'zoneGojo') initGojoGame();
                 if (zoneId === 'zoneBoss') startBossGame();
                 if (zoneId === 'zoneCakeDefense') initCakeDefense();
                 if (zoneId === 'zoneConstellation') initConstellationGame();
