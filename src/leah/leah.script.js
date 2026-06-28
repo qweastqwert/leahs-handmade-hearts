@@ -2156,6 +2156,11 @@
             letter&& letter.classList.add('translate-y-8', 'opacity-0');
             seal  && seal.classList.remove('broken');
             endingFireworks = [];
+            // Wipe stickers from inside the cinematic so a replay re-spawns cleanly
+            const sl = document.getElementById('finaleSparkleLayer');
+            if (sl) sl.querySelectorAll('.ishaan-sticker').forEach(n => n.remove());
+            // Scatter the stickers across the whole site as a permanent love-graffiti layer
+            try { scatterIshaanStickersAcrossSite(); } catch (e) {}
         }
 
         // Hand-doodled sparkle glyphs that puff around the crown / letter
