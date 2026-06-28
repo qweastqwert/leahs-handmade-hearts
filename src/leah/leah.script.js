@@ -1402,12 +1402,17 @@
             if (cakeInterval) clearInterval(cakeInterval);
             cakeInterval = setInterval(() => {
                 if (!state.cakeGameActive || document.getElementById('modalCakeDefense').classList.contains('hidden')) return;
-                cakeEnemies.push({
-                    x: Math.random() < 0.5 ? 0 : cakeCanvas.width,
-                    y: Math.random() * (cakeCanvas.height - 60) + 30,
-                    speed: Math.random() * 0.4 + 0.3 
-                });
-            }, 2000);
+                // Difficulty wave scales with score: faster, sometimes 2-spawn bursts
+                const wave = 1 + Math.floor(cakeScore / 25);
+                const burst = wave >= 3 && Math.random() < 0.35 ? 2 : 1;
+                for (let b = 0; b < burst; b++) {
+                    cakeEnemies.push({
+                        x: Math.random() < 0.5 ? 0 : cakeCanvas.width,
+                        y: Math.random() * (cakeCanvas.height - 60) + 30,
+                        speed: Math.random() * 0.4 + 0.3 + wave * 0.12
+                    });
+                }
+            }, 1500);
 
             runCakeDefenseFrame();
         }
