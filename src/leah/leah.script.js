@@ -1146,11 +1146,12 @@
                 });
             });
 
-            if (Math.random() < 0.03) {
-                bossProjectiles.push({ x: Math.random() * bossCanvas.width, y: 0, s: Math.random() * 1.5 + 1.2 });
+            // Spawn obstacles + sparkles, scaled by wave
+            if (Math.random() < 0.02 + wave * 0.008) {
+                bossProjectiles.push({ x: Math.random() * bossCanvas.width, y: 0, s: Math.random() * 1.5 + 1.0 + wave * 0.25 });
             }
-            if (Math.random() < 0.04) {
-                sparklesPool.push({ x: Math.random() * bossCanvas.width, y: 0, s: Math.random() * 1.5 + 1.0 });
+            if (Math.random() < 0.04 + wave * 0.005) {
+                sparklesPool.push({ x: Math.random() * bossCanvas.width, y: 0, s: Math.random() * 1.5 + 1.0 + wave * 0.15 });
             }
 
             // Draw obstacles
