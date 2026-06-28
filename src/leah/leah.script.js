@@ -1042,6 +1042,16 @@
             bossProjectiles = [];
             sparklesPool = [];
             shieldMissiles = [];
+            bossStars = [];
+            for (let i = 0; i < 60; i++) {
+                bossStars.push({
+                    x: Math.random() * bossCanvas.width,
+                    y: Math.random() * bossCanvas.height,
+                    r: Math.random() * 1.4 + 0.4,
+                    s: Math.random() * 0.6 + 0.15,
+                    a: Math.random() * 0.7 + 0.2
+                });
+            }
             
             document.getElementById('bossHPVal').innerText = `${bossHP}%`;
             document.getElementById('bossScoreVal').innerText = bossScore;
