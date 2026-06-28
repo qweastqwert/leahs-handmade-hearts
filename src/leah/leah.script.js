@@ -2133,6 +2133,9 @@
             // Stage 5 — continuous gentle sparkle drizzle
             if (cinema._sparkleTimer) clearInterval(cinema._sparkleTimer);
             cinema._sparkleTimer = setInterval(() => burstSparkles(3), 900);
+
+            // Stage 6 — handmade Ishaan stickers peek in around the corners
+            spawnFinaleStickers();
         }
 
         function closeEndingCinematic() {
