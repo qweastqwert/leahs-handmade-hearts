@@ -62,7 +62,7 @@
         const achievementsList = [
             { id: 'ach_join', title: 'Curious Explorer', desc: 'Slipped into Leah\'s interactive Birthday Dimension.', hint: 'Always unlocked.', icon: '🪐' },
             { id: 'ach_rizz', title: 'Cosmic Poet', desc: 'Rated and appreciated sweet astrophysical compliments.', hint: 'Find the Poetic Lines Arena.', icon: '✉️' },
-            { id: 'ach_stare', title: 'Absolute Eye-Lock', desc: 'Maintained mesmerizing eye contact for 5+ seconds.', hint: 'Hold down focus in the Eye Contact room.', icon: '🤎' },
+            { id: 'ach_museum', title: 'Curator of Leah', desc: 'Activated all three museum exhibits.', hint: 'Open the Historical Museum and try each widget.', icon: '🏛️' },
             { id: 'ach_slot', title: 'Jackpot Master', desc: 'Pulled the slot lever until the reels aligned.', hint: 'Spin the slots in the casino.', icon: '🎰' },
             { id: 'ach_cupcake', title: 'Master Baker', desc: 'Assembled a perfect customized cupcake creation.', hint: 'Decorate and Present in the Cozy Bakery.', icon: '🧁' },
             { id: 'ach_button_10', title: 'Paradox Seeker', desc: 'Pressed the suspicious Red Button 10 times.', hint: 'Click the Red Button repeatedly.', icon: '🛑' },
