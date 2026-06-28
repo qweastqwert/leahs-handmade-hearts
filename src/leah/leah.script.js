@@ -1980,6 +1980,19 @@
             requestAnimationFrame(step);
         }
 
+        // History scroller: tap a line to hear a tiny chime + bookmark it
+        document.addEventListener('click', function (e) {
+            const t = e.target;
+            if (t && t.classList && t.classList.contains('history-line')) {
+                if (state.hasSynthesizer) {
+                    const notes = [523.25, 587.33, 659.25, 783.99, 880];
+                    synth.playTone(notes[Math.floor(Math.random() * notes.length)], 'sine', 0.12, 0.04);
+                }
+                t.style.background = 'rgba(251, 191, 36, 0.28)';
+                setTimeout(() => { t.style.background = ''; }, 1200);
+            }
+        });
+
         // =========================================================================
         // MODULE 13: BIRTHDAY SPEEDRUN CHALLENGE REFLEX GAME
         // =========================================================================
