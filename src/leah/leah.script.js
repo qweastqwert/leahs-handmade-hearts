@@ -660,21 +660,28 @@
             state.soundAmbiences.cafeVolume = cafeVal;
             state.audioCtx = synth.ctx;
 
-            if (cafeVal > 0 && !state.soundAmbiences.cafeInterval) {
-                triggerCafeChord();
-                state.soundAmbiences.cafeInterval = setInterval(triggerCafeChord, 5000);
-            } else if (cafeVal <= 0 && state.soundAmbiences.cafeInterval) {
-                clearInterval(state.soundAmbiences.cafeInterval);
-                state.soundAmbiences.cafeInterval = null;
+            // Jittered timers so the loops feel less mechanical
+            function _scheduleCafe() {
+                state.soundAmbiences.cafeInterval = setTimeout(() => {
+                    if (state.soundAmbiences.cafeVolume <= 0) { state.soundAmbiences.cafeInterval = null; return; }
+                    triggerCafeChord();
+                    _scheduleCafe();
+                }, 3500 + Math.random() * 3000);
+            }
+            function _scheduleChimes() {
+                state.soundAmbiences.chimeInterval = setTimeout(() => {
+                    const v = (document.getElementById('slideChimes').value || 0) / 100;
+                    if (v <= 0) { state.soundAmbiences.chimeInterval = null; return; }
+                    triggerChimes();
+                    _scheduleChimes();
+                }, 1800 + Math.random() * 2600);
             }
 
-            if (chimesVal > 0 && !state.soundAmbiences.chimeInterval) {
-                triggerChimes();
-                state.soundAmbiences.chimeInterval = setInterval(triggerChimes, 3000);
-            } else if (chimesVal <= 0 && state.soundAmbiences.chimeInterval) {
-                clearInterval(state.soundAmbiences.chimeInterval);
-                state.soundAmbiences.chimeInterval = null;
-            }
+            if (cafeVal > 0 && !state.soundAmbiences.cafeInterval) { triggerCafeChord(); _scheduleCafe(); }
+            else if (cafeVal <= 0 && state.soundAmbiences.cafeInterval) { clearTimeout(state.soundAmbiences.cafeInterval); state.soundAmbiences.cafeInterval = null; }
+
+            if (chimesVal > 0 && !state.soundAmbiences.chimeInterval) { triggerChimes(); _scheduleChimes(); }
+            else if (chimesVal <= 0 && state.soundAmbiences.chimeInterval) { clearTimeout(state.soundAmbiences.chimeInterval); state.soundAmbiences.chimeInterval = null; }
         }
         document.getElementById('slideWind').addEventListener('input', updateAmbiences);
         document.getElementById('slideOcean').addEventListener('input', updateAmbiences);
