@@ -451,7 +451,7 @@
             
             const map = {
                 'zoneZen': 'modalZen', 'zonePickup': 'modalPickup', 'zoneCupcake': 'modalCupcake',
-                'zoneGojo': 'modalGojo', 'zoneSlot': 'modalSlot', 'zoneBoss': 'modalBoss',
+                'zoneSlot': 'modalSlot', 'zoneBoss': 'modalBoss',
                 'zoneRedButton': 'modalRedButton', 'zoneCakeDefense': 'modalCakeDefense',
                 'zoneConstellation': 'modalConstellation', 'zoneHarmony': 'modalHarmony',
                 'zoneCringe': 'modalCringe', 'zoneTemple': 'modalTemple', 'zoneMuseum': 'modalMuseum',
@@ -465,7 +465,6 @@
                 if (cakeInterval) clearInterval(cakeInterval);
             }
             if (zoneId === 'zoneBoss') { state.bossGameActive = false; }
-            if (zoneId === 'zoneGojo') { stopStaring(); gojoGameActive = false; }
             if (zoneId === 'zoneConstellation') { state.constellationActive = false; }
             if (zoneId === 'zoneSpeedrun') { state.speedrunActive = false; }
         }
