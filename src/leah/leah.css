@@ -265,3 +265,149 @@
             box-shadow: 3px 3px 0 0 var(--ink);
             clip-path: polygon(6% 0, 94% 0, 100% 50%, 94% 100%, 6% 100%, 0 50%);
         }
+
+        /* ================================================================
+           ISHAAN STICKERS — handmade polaroid look
+           ================================================================ */
+        .ishaan-sticker {
+            --rot: 0deg;
+            position: relative;
+            display: inline-block;
+            padding: 6px 6px 22px 6px;
+            background: #fffdf6;
+            border: 2px solid var(--ink, #2d2d2d);
+            box-shadow: 3px 4px 0 0 rgba(45,45,45,0.85), 0 8px 18px rgba(0,0,0,0.12);
+            transform: rotate(var(--rot));
+            transition: transform 220ms ease, box-shadow 220ms ease;
+            user-select: none;
+            border-radius: 4px 12px 4px 12px / 10px 4px 12px 4px;
+        }
+        .ishaan-sticker::before {
+            content: "";
+            position: absolute; left: 50%; top: -10px;
+            width: 44px; height: 14px;
+            background: rgba(253, 224, 71, 0.7);
+            border: 1px dashed rgba(120, 53, 15, 0.4);
+            transform: translateX(-50%) rotate(-4deg);
+            border-radius: 2px;
+        }
+        .ishaan-sticker img {
+            display: block;
+            width: 100%; height: auto;
+            border-radius: 2px 8px 2px 8px;
+            filter: contrast(1.04) saturate(1.05);
+        }
+        .ishaan-sticker-caption {
+            display: block;
+            text-align: center;
+            font-family: 'Caveat', cursive;
+            font-size: 1.05rem;
+            color: #78350f;
+            margin-top: 4px;
+            transform: rotate(-1.5deg);
+            line-height: 1;
+        }
+        .ishaan-sticker:hover {
+            transform: rotate(0deg) scale(1.06);
+            box-shadow: 5px 6px 0 0 rgba(45,45,45,0.9), 0 12px 22px rgba(0,0,0,0.18);
+            z-index: 60;
+        }
+        @keyframes ishaanStickerPop {
+            0%   { opacity: 0; transform: rotate(var(--rot)) scale(0.3); }
+            70%  { opacity: 1; transform: rotate(var(--rot)) scale(1.12); }
+            100% { opacity: 1; transform: rotate(var(--rot)) scale(1); }
+        }
+        .ishaan-sticker-pop { animation: ishaanStickerPop 700ms cubic-bezier(0.18, 1.2, 0.4, 1) both; }
+        @keyframes ishaanStickerPulse {
+            0%, 100% { transform: rotate(var(--rot)) scale(1); }
+            50%      { transform: rotate(var(--rot)) scale(1.18); }
+        }
+        .ishaan-sticker-pulse { animation: ishaanStickerPulse 700ms ease-in-out; }
+
+        /* Site-wide scatter overlay — fixed so stickers float over everything */
+        .scatter-layer {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 40;
+        }
+        .scatter-layer .ishaan-sticker {
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        /* ================================================================
+           Footer fix — keep the message on its own line, never protrudes
+           ================================================================ */
+        footer {
+            position: relative;
+            z-index: 50;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+        footer p {
+            max-width: 900px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            word-break: break-word;
+            white-space: normal;
+            line-height: 1.5;
+        }
+
+        /* ================================================================
+           Slot Machine: highlight Stellar Alignment as the must-get
+           ================================================================ */
+        .jackpot-target {
+            position: relative;
+            background: linear-gradient(135deg, #fef3c7 0%, #fbcfe8 50%, #ddd6fe 100%);
+            border: 3px dashed #7c3aed;
+            border-radius: 14px 28px 14px 28px / 28px 14px 28px 14px;
+            padding: 10px 14px;
+            box-shadow: 4px 4px 0 0 #2d2d2d;
+            animation: jackpotGlow 2.2s ease-in-out infinite;
+        }
+        @keyframes jackpotGlow {
+            0%, 100% { box-shadow: 4px 4px 0 0 #2d2d2d, 0 0 0 0 rgba(124,58,237,0.0); }
+            50%      { box-shadow: 4px 4px 0 0 #2d2d2d, 0 0 22px 4px rgba(124,58,237,0.45); }
+        }
+        .jackpot-target::after {
+            content: "✦ MUST GET ✦";
+            position: absolute; top: -10px; right: 10px;
+            background: #fde047; border: 2px solid #2d2d2d;
+            font-family: 'Caveat', cursive; font-weight: 800;
+            font-size: 0.85rem; padding: 1px 8px;
+            transform: rotate(4deg);
+            box-shadow: 2px 2px 0 0 #2d2d2d;
+        }
+
+        /* ================================================================
+           Polaroid flip cards in the Historical Museum
+           ================================================================ */
+        .polaroid-flip {
+            perspective: 1200px;
+            min-height: 150px;
+            cursor: pointer;
+        }
+        .polaroid-inner {
+            position: relative;
+            width: 100%; min-height: 150px;
+            transform-style: preserve-3d;
+            transition: transform 700ms cubic-bezier(0.6, 0.05, 0.3, 1.1);
+        }
+        .polaroid-flip.is-flipped .polaroid-inner { transform: rotateY(180deg); }
+        .polaroid-front, .polaroid-back {
+            position: absolute; inset: 0;
+            backface-visibility: hidden;
+            border: 2px solid var(--ink, #2d2d2d);
+            border-radius: 8px 20px 8px 20px / 20px 8px 20px 8px;
+            padding: 14px;
+            box-shadow: 3px 3px 0 0 #2d2d2d;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        .polaroid-back { transform: rotateY(180deg); }
+
+        .exhibit-card { transition: transform 200ms ease, box-shadow 200ms ease; }
+        .exhibit-card:hover { transform: translateY(-2px) rotate(-0.4deg); box-shadow: 4px 4px 0 0 #2d2d2d; }
+
+        .history-line { cursor: pointer; transition: background 150ms ease; padding: 2px 4px; border-radius: 4px; }
+        .history-line:hover { background: rgba(251, 191, 36, 0.18); }
