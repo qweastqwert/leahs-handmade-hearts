@@ -1429,21 +1429,44 @@
             const cx = cakeCanvas.width / 2;
             const cy = cakeCanvas.height / 2;
 
-            // Draw hand sketched tier cake
-            cakeCtx.fillStyle = '#fbcfe8';
-            cakeCtx.beginPath();
-            cakeCtx.arc(cx, cy, 32, 0, Math.PI * 2);
-            cakeCtx.fill();
-            cakeCtx.strokeStyle = '#db2777';
-            cakeCtx.lineWidth = 3.5;
-            cakeCtx.stroke();
+            // Pulsing protective aura around the cake
+            const auraR = 50 + Math.sin(Date.now() * 0.004) * 6;
+            const auraGrad = cakeCtx.createRadialGradient(cx, cy, 10, cx, cy, auraR);
+            auraGrad.addColorStop(0, 'rgba(253, 224, 71, 0.35)');
+            auraGrad.addColorStop(1, 'rgba(253, 224, 71, 0)');
+            cakeCtx.fillStyle = auraGrad;
+            cakeCtx.beginPath(); cakeCtx.arc(cx, cy, auraR, 0, Math.PI * 2); cakeCtx.fill();
 
-            // Draw candle
+            // Tiered hand-drawn cake (bottom tier + top tier)
+            cakeCtx.fillStyle = '#f9a8d4'; // bottom tier
+            cakeCtx.beginPath();
+            cakeCtx.ellipse(cx, cy + 14, 42, 14, 0, 0, Math.PI * 2);
+            cakeCtx.fill();
+            cakeCtx.strokeStyle = '#9d174d'; cakeCtx.lineWidth = 2.5; cakeCtx.stroke();
+
+            cakeCtx.fillStyle = '#fbcfe8'; // top tier
+            cakeCtx.beginPath();
+            cakeCtx.ellipse(cx, cy - 6, 28, 12, 0, 0, Math.PI * 2);
+            cakeCtx.fill();
+            cakeCtx.strokeStyle = '#db2777'; cakeCtx.lineWidth = 2.5; cakeCtx.stroke();
+
+            // Sprinkles
+            for (let i = 0; i < 6; i++) {
+                cakeCtx.fillStyle = ['#fde047','#7dd3fc','#86efac','#fda4af'][i % 4];
+                cakeCtx.fillRect(cx - 22 + i * 8, cy + 12 + (i % 2) * 4, 4, 2);
+            }
+
+            // Candle + flickering flame
             cakeCtx.fillStyle = '#38bdf8';
-            cakeCtx.fillRect(cx - 2, cy - 18, 4, 12);
+            cakeCtx.fillRect(cx - 2, cy - 24, 4, 14);
+            const flicker = 3.2 + Math.sin(Date.now() * 0.02) * 0.8;
             cakeCtx.fillStyle = '#f97316';
             cakeCtx.beginPath();
-            cakeCtx.arc(cx, cy - 22, 3.5, 0, Math.PI * 2);
+            cakeCtx.arc(cx, cy - 28, flicker, 0, Math.PI * 2);
+            cakeCtx.fill();
+            cakeCtx.fillStyle = '#fde68a';
+            cakeCtx.beginPath();
+            cakeCtx.arc(cx, cy - 29, flicker - 1.2, 0, Math.PI * 2);
             cakeCtx.fill();
 
             confettiMines.forEach((mine, mIdx) => {
